@@ -1,27 +1,38 @@
-const emailaddressURI = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
-const nameidentifierURI = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
-const roleURI="http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+const emailaddressURI =
+  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
+const nameidentifierURI =
+  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+const roleURI = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
 
-export function saveAccessToken(accessToken){
-    localStorage.setItem("accessToken", accessToken);
+export function saveAccessToken(accessToken) {
+  localStorage.setItem("accessToken", accessToken);
 }
 
-export function getAccessToken(){
-    return localStorage.getItem("accessToken");
+export function getAccessToken() {
+  return localStorage.getItem("accessToken");
 }
 
-export function clearAccessToken(){
-    localStorage.removeItem("accessToken")
+export function clearAccessToken() {
+  localStorage.removeItem("accessToken");
 }
 
-export function decodeJWT(token){
-    //tba
+export function parseJWT(token) {
+  try {
+    const payload = token.split(".")[1];
+    return JSON.parse(atob(payload));
+  } catch (err) {
+    console.error("Invalid token", err);
+    return {};
+  }
+}
+export function isTokenExpired() {
+  const parsedToken = parseJWT(getAccessToken());
+  if (!parsedToken || !parsedToken.exp) return true;
+  return parsedToken.exp < Date.now() / 1000;
 }
 
-export function isTokenExpired(token){
-    //tba
-}
-
-export function getRole(){
-    //tba
+export function getRole() {
+  const parsedToken = parseJWT(getAccessToken());
+  if (!parsedToken) return null;
+  return parsedToken[roleURI];
 }
