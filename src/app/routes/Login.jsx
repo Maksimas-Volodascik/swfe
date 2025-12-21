@@ -4,21 +4,36 @@ import { CssBaseline } from "@mui/material";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { SignInPage } from "@toolpad/core/SignInPage";
 import { useTheme } from "@mui/material/styles";
+import { saveAccessToken } from "../../lib/tokenService";
+import { useNavigate } from "react-router-dom";
 
 const providers = [{ id: "credentials", name: "Email and Password" }];
 
-const signIn = async (provider) => {
-  const promise = new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(`Sign in with ${provider.id}`);
-      resolve({ error: "Invalid Email or Password" });
-    }, 500);
-  });
-  return promise;
-};
-
 const Login = () => {
-  const theme = useTheme();
+  const navigate = useNavigate();
+
+  const signIn = async (provider, formData) => {
+    const response = await fetch("https://localhost:7220/api/user/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: formData.get("email"),
+        password: formData.get("password"),
+      }),
+    });
+
+    if (!response.ok) {
+      return { error: "Invalid Email or Password" };
+    }
+
+    const { accessToken, refreshToken } = await response.json();
+    saveAccessToken(accessToken);
+    navigate("/register");
+    return {};
+  };
+
   return (
     <>
       <CssBaseline />
@@ -64,7 +79,6 @@ const Login = () => {
               justifyContent: "center",
               overflow: "hidden",
             }}
-            theme={theme}
           >
             <SignInPage
               signIn={signIn}
