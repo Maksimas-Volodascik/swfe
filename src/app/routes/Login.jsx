@@ -22,10 +22,14 @@ const Login = () => {
         email: formData.get("email"),
         password: formData.get("password"),
       }),
+    }).catch((error) => {
+      console.log("error: " + error);
+      return { error: "Network Error" };
     });
 
     if (!response.ok) {
-      return { error: "Invalid Email or Password" };
+      if (response.status === undefined) return { error: "Network Error" };
+      else return { error: "Invalid Email or Password" };
     }
 
     const { accessToken, refreshToken } = await response.json();
