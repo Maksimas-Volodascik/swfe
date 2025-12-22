@@ -9,9 +9,10 @@ import {
 const Register = () => {
   const handleRequest = () => {
     const token = getAccessToken();
-    console.log("Decoded JWT token: ", parseJWT(token));
-    getRole();
-    isTokenExpired();
+    //console.log("Access token", getAccessToken());
+    //console.log("Decoded JWT token: ", parseJWT(token));
+    console.log("role: ", isTokenExpired());
+    //isTokenExpired();
   };
 
   return (

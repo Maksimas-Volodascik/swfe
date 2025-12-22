@@ -26,12 +26,22 @@ export function parseJWT(token) {
   }
 }
 export function isTokenExpired() {
+  const token = getAccessToken();
+  if (token === null) {
+    return true;
+  }
+
   const parsedToken = parseJWT(getAccessToken());
   if (!parsedToken || !parsedToken.exp) return true;
   return parsedToken.exp < Date.now() / 1000;
 }
 
 export function getRole() {
+  const token = getAccessToken();
+  if (token === null) {
+    return "none";
+  }
+
   const parsedToken = parseJWT(getAccessToken());
   if (!parsedToken) return null;
   return parsedToken[roleURI];
