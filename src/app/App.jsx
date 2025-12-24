@@ -1,8 +1,9 @@
 import { Route, Routes } from "react-router-dom";
+import { PublicAccess, PrivateAccess } from "../lib/authProvider";
+import Layout from "./Layout";
 import Login from "./routes/login";
 import Register from "./routes/Register";
 import Dashboard from "./routes/Dashboard";
-import { PublicAccess, PrivateAccess } from "../lib/authProvider";
 
 function App() {
   return (
@@ -13,7 +14,9 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
       </Route>
       <Route element={<PrivateAccess />}>
-        <Route path="/register" element={<Register />} />
+        <Route element={<Layout />}>
+          <Route path="/register" element={<Register />} />
+        </Route>
       </Route>
     </Routes>
   );
