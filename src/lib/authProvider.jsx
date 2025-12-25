@@ -3,7 +3,7 @@ import { getRole, isTokenExpired } from "./tokenService";
 
 export function PublicAccess() {
   console.log("is token expired? ", isTokenExpired());
-  return !isTokenExpired ? <Outlet /> : <Navigate to="/dashboard" />;
+  return isTokenExpired ? <Outlet /> : <Navigate to="/register" />;
 }
 
 export function PrivateAccess() {
