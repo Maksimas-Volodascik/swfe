@@ -23,7 +23,7 @@ const Layout = () => {
           <NavBar />
         </Box>
         <Box sx={{ gridRow: 2 }}>
-          <Outlet />;
+          <Outlet />
         </Box>
       </Box>
     </>

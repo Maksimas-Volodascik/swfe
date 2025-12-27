@@ -3,8 +3,6 @@ import Box from "@mui/material/Box";
 import { CssBaseline } from "@mui/material";
 import LoginForm from "../../components/LoginForm";
 
-const providers = [{ id: "credentials", name: "Email and Password" }];
-
 const Login = () => {
   return (
     <>

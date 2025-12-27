@@ -4,6 +4,7 @@ import Layout from "./Layout";
 import Login from "./routes/login";
 import Register from "./routes/Register";
 import Dashboard from "./routes/Dashboard";
+import StudentList from "./routes/StudentList";
 
 function App() {
   return (
@@ -11,11 +12,12 @@ function App() {
       <Route element={<PublicAccess />}>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
       </Route>
       <Route element={<PrivateAccess />}>
         <Route element={<Layout />}>
           <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/students" element={<StudentList />} />
         </Route>
       </Route>
     </Routes>
