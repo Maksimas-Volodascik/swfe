@@ -10,6 +10,10 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 
 const NavBar = () => {
+  const handleNavAction = (index) => {
+    console.log(index);
+  };
+
   return (
     <div>
       <Box
@@ -23,30 +27,32 @@ const NavBar = () => {
         role="presentation"
       >
         <List sx={{ paddingTop: "20px" }}>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon sx={{ color: "inherit" }}>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+          <ListItem disablePadding>
+            <ListItemButton href="dashboard">
+              <ListItemIcon sx={{ color: "inherit" }}>
+                <InboxIcon />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton href="students">
+              <ListItemIcon sx={{ color: "inherit" }}>
+                <MailIcon />
+              </ListItemIcon>
+              <ListItemText primary="Student List" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton href="register">
+              <ListItemIcon sx={{ color: "inherit" }}>
+                <MailIcon />
+              </ListItemIcon>
+              <ListItemText primary="Register" />
+            </ListItemButton>
+          </ListItem>
         </List>
         <Divider />
-        <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon sx={{ color: "inherit" }}>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
       </Box>
     </div>
   );
