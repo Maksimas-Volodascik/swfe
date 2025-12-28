@@ -34,11 +34,15 @@ const Header = () => {
     <div>
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
-          <Toolbar sx={{ backgroundColor: "#F08B51" }}>
+          <Toolbar sx={{ backgroundColor: "#ffffffff" }}>
+            <img
+              src="src\assets\icon.jpg"
+              style={{ maxHeight: "40px", width: "40px", paddingRight: "10px" }}
+            />
             <Typography
               variant="h6"
               component="div"
-              sx={{ flexGrow: 1, color: "#7a1701ff", fontWeight: "bold" }}
+              sx={{ flexGrow: 1, color: "#000000ff", fontWeight: "bold" }}
             >
               Student Gradebook
             </Typography>

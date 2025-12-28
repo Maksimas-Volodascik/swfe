@@ -19,9 +19,9 @@ const NavBar = () => {
       <Box
         sx={{
           width: 250,
-          backgroundColor: "#ffb88fff",
+          backgroundColor: "#1C1C1C",
           height: "100vh",
-          color: "#000000ff",
+          color: "#FFFFFF",
           fontWeight: "bold",
         }}
         role="presentation"

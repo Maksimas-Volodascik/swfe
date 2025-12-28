@@ -8,10 +8,12 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso } from "react-virtuoso";
 import { Button } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 
 function createData(id, name, lastname, birthdate, enrollmentdate, btn) {
   return { id, name, lastname, birthdate, enrollmentdate, btn };
 }
+
 const columns = [
   {
     width: 5,
@@ -40,16 +42,9 @@ const columns = [
   },
   {
     width: 100,
-    label: "Buttons",
+    label: "",
     dataKey: "btn",
   },
-];
-
-const rows = [
-  createData("1", "Name", "LastName", "date of birth", "2025 today"),
-  createData("2", "Name", "LastName", "date of birth", "2025 today"),
-  createData("3", "Name", "LastName", "date of birth", "2025 today"),
-  createData("4", "Name", "LastName", "date of birth", "2025 today"),
 ];
 
 const VirtuosoTableComponents = {
@@ -101,7 +96,7 @@ function rowContent(_index, row) {
           align={column.label === "ID" ? "left" : "center"}
         >
           {row[column.dataKey]}
-          {column.label === "Buttons" ? (
+          {column.dataKey === "btn" ? (
             <Button onClick={() => handleOnDelete(row.id)}>Delete</Button>
           ) : (
             ""
@@ -113,9 +108,32 @@ function rowContent(_index, row) {
 }
 
 const StudentList = () => {
+  const { data } = useQuery({
+    queryKey: ["students"],
+    queryFn: getStudentList,
+  });
+
+  const rows = [];
+
+  for (let i = 0; i < 100; i++) {
+    data?.forEach((student) => {
+      const { id, first_name, last_name, date_of_birth, enrollment_date } =
+        student;
+      rows.push(
+        createData(
+          id,
+          first_name,
+          last_name,
+          date_of_birth.substring(0, 10),
+          enrollment_date.substring(0, 10)
+        )
+      );
+    });
+  }
+
   return (
     <>
-      <Paper style={{ height: 400, width: "100%" }}>
+      <Paper style={{ height: "100vh", width: "100%", padding: "30px" }}>
         <TableVirtuoso
           data={rows}
           components={VirtuosoTableComponents}
@@ -125,6 +143,15 @@ const StudentList = () => {
       </Paper>
     </>
   );
+};
+
+const getStudentList = async () => {
+  const response = await fetch("https://localhost:7220/api/student");
+  if (!response.ok) {
+    throw new Error("Failed to fetch students");
+  }
+
+  return await response.json();
 };
 
 export default StudentList;
