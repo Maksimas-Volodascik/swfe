@@ -5,9 +5,10 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso } from "react-virtuoso";
-import { Button } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 const columns = [
@@ -80,7 +81,7 @@ function fixedHeaderContent() {
   );
 }
 
-const UserTable = ({ rows, refetch }) => {
+const UserTable = ({ rows }) => {
   const queryClient = useQueryClient();
   function rowContent(_index, row) {
     const handleOnDelete = (id) => {
@@ -101,7 +102,13 @@ const UserTable = ({ rows, refetch }) => {
           >
             {row[column.dataKey]}
             {column.dataKey === "btn" ? (
-              <Button onClick={() => handleOnDelete(row.id)}>Delete</Button>
+              <IconButton
+                onClick={() => handleOnDelete(row.id)}
+                aria-label="delete"
+                size="large"
+              >
+                <DeleteIcon fontSize="inherit" />
+              </IconButton> //
             ) : (
               ""
             )}

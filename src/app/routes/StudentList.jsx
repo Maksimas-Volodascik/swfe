@@ -3,12 +3,16 @@ import Paper from "@mui/material/Paper";
 import { useQuery } from "@tanstack/react-query";
 import UserTable from "../../components/UserTable";
 import loading from "../../assets/loading.svg";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import ModalView from "../../components/ModalView";
+import { useState } from "react";
 
 function createData(id, name, lastname, birthdate, enrollmentdate, btn) {
   return { id, name, lastname, birthdate, enrollmentdate, btn };
 }
 const StudentList = () => {
-  const { data, refetch, isPending, error } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ["students"],
     queryFn: getStudentList,
   });
@@ -27,6 +31,8 @@ const StudentList = () => {
       )
     );
   });
+
+  const [open, setOpen] = useState(false);
 
   return (
     <>
@@ -49,7 +55,21 @@ const StudentList = () => {
             }}
           />
         ) : (
-          <UserTable rows={rows} refetch={refetch} />
+          <>
+            <Box
+              sx={{ width: "100%", textAlign: "right", paddingBottom: "10px" }}
+            >
+              <Button
+                variant="outlined"
+                color="success"
+                onClick={() => setOpen(true)}
+              >
+                + Add new
+              </Button>
+              <ModalView open={open} onClose={() => setOpen(false)} />
+            </Box>
+            <UserTable rows={rows} />
+          </>
         )}
       </Paper>
     </>
