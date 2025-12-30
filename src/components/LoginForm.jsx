@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import { SignInPage } from "@toolpad/core/SignInPage";
 import { saveAccessToken } from "../lib/tokenService";
+
 const providers = [{ id: "credentials", name: "Email and Password" }];
 
 const LoginForm = () => {
@@ -41,7 +42,7 @@ const LoginForm = () => {
         overflow: "hidden",
       }}
     >
-      <SignInPage
+      <SignInPage //TODO: Remake login form form scratch without using toolpad
         signIn={signIn}
         providers={providers}
         localeText={{
