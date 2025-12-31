@@ -7,9 +7,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso } from "react-virtuoso";
 import { useQueryClient } from "@tanstack/react-query";
+import { Box } from "@mui/material";
+import { useState } from "react";
+import ModalUser from "./ModalUser";
 
 const columns = [
   {
@@ -72,7 +76,11 @@ function fixedHeaderContent() {
           variant="head"
           align="center"
           style={{ width: column.width }}
-          sx={{ backgroundColor: "#696969ff" }}
+          sx={{
+            backgroundColor: "#e2e2e2ff",
+            typography: "body2",
+            fontWeight: "bold",
+          }}
         >
           {column.label}
         </TableCell>
@@ -82,49 +90,73 @@ function fixedHeaderContent() {
 }
 
 const UserTable = ({ rows }) => {
+  const [open, setOpen] = useState(false);
+  const [userData, setUserData] = useState();
   const queryClient = useQueryClient();
+
   function rowContent(_index, row) {
     const handleOnDelete = (id) => {
-      console.log("OnDelete clicked: ", id);
       fetch("https://localhost:7220/api/student/" + id, {
         method: "DELETE",
       });
 
       queryClient.invalidateQueries({ queryKey: ["students"] }); //Force table refresh
     };
+    const handleOnEdit = (row) => {
+      setUserData(row);
+      setOpen(true);
+    };
 
     return (
-      <React.Fragment>
-        {columns.map((column) => (
-          <TableCell
-            key={column.dataKey}
-            align={column.label === "ID" ? "left" : "center"}
-          >
-            {row[column.dataKey]}
-            {column.dataKey === "btn" ? (
-              <IconButton
-                onClick={() => handleOnDelete(row.id)}
-                aria-label="delete"
-                size="large"
-              >
-                <DeleteIcon fontSize="inherit" />
-              </IconButton> //
-            ) : (
-              ""
-            )}
-          </TableCell>
-        ))}
-      </React.Fragment>
+      <>
+        <React.Fragment>
+          {columns.map((column) => (
+            <TableCell
+              key={column.dataKey}
+              align={column.label === "ID" ? "left" : "center"}
+            >
+              {row[column.dataKey]}
+              {column.dataKey === "btn" ? (
+                <Box>
+                  <IconButton
+                    onClick={() => handleOnEdit(row)}
+                    aria-label="delete"
+                    size="large"
+                  >
+                    <EditIcon fontSize="inherit" />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => handleOnDelete(row.id)}
+                    aria-label="delete"
+                    size="large"
+                  >
+                    <DeleteIcon fontSize="inherit" />
+                  </IconButton>
+                </Box>
+              ) : (
+                ""
+              )}
+            </TableCell>
+          ))}
+        </React.Fragment>
+      </>
     );
   }
 
   return (
-    <TableVirtuoso
-      data={rows}
-      components={VirtuosoTableComponents}
-      fixedHeaderContent={fixedHeaderContent}
-      itemContent={rowContent}
-    />
+    <>
+      <TableVirtuoso
+        data={rows}
+        components={VirtuosoTableComponents}
+        fixedHeaderContent={fixedHeaderContent}
+        itemContent={rowContent}
+      />
+      <ModalUser
+        userData={userData}
+        open={open}
+        onClose={() => setOpen(false)}
+      />
+    </>
   );
 };
 

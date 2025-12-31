@@ -5,34 +5,16 @@ import UserTable from "../../components/UserTable";
 import loading from "../../assets/loading.svg";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import ModalView from "../../components/ModalView";
+import ModalUser from "../../components/ModalUser";
 import { useState } from "react";
+import UserTableRow from "../../components/UserTableRow";
 
-function createData(id, name, lastname, birthdate, enrollmentdate, btn) {
-  return { id, name, lastname, birthdate, enrollmentdate, btn };
-}
 const StudentList = () => {
+  const [open, setOpen] = useState(false);
   const { data, isPending } = useQuery({
     queryKey: ["students"],
     queryFn: getStudentList,
   });
-  const rows = [];
-
-  data?.forEach((student) => {
-    const { id, first_name, last_name, date_of_birth, enrollment_date } =
-      student;
-    rows.push(
-      createData(
-        id,
-        first_name,
-        last_name,
-        date_of_birth.substring(0, 10),
-        enrollment_date.substring(0, 10)
-      )
-    );
-  });
-
-  const [open, setOpen] = useState(false);
 
   return (
     <>
@@ -66,16 +48,15 @@ const StudentList = () => {
               >
                 + Add new
               </Button>
-              <ModalView open={open} onClose={() => setOpen(false)} />
+              <ModalUser open={open} onClose={() => setOpen(false)} />
             </Box>
-            <UserTable rows={rows} />
+            <UserTableRow data={data} />
           </>
         )}
       </Paper>
     </>
   );
 };
-
 const getStudentList = async () => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
   const response = await fetch("https://localhost:7220/api/student");
@@ -85,5 +66,4 @@ const getStudentList = async () => {
 
   return await response.json();
 };
-
 export default StudentList;

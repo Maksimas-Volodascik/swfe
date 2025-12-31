@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -18,7 +18,7 @@ const style = {
   p: 4,
 };
 
-export default function ModalView({ open, onClose }) {
+export default function ModalUser({ userData, open, onClose }) {
   if (!open) return null;
   const queryClient = useQueryClient();
   const today = new Date().toISOString().split("T")[0];
@@ -26,9 +26,9 @@ export default function ModalView({ open, onClose }) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    first_name: "",
-    last_name: "",
-    date_of_birth: today,
+    first_name: userData ? userData.name : "",
+    last_name: userData ? userData.lastname : "",
+    date_of_birth: userData ? userData.birthdate : today,
   });
 
   const handleChange = (e) => {
@@ -38,24 +38,40 @@ export default function ModalView({ open, onClose }) {
 
   const handleOnAddNew = async () => {
     // TODO: check if provided formData is valid
-
-    const response = await fetch("https://localhost:7220/api/student", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    }).catch((error) => {
-      console.log("error: " + error);
-      return { error: "Network Error" };
-    });
+    let response;
+    {
+      userData
+        ? (response = await fetch(
+            "https://localhost:7220/api/student/" + userData.id,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                first_name: formData.first_name,
+                last_name: formData.last_name,
+                date_of_birth: formData.date_of_birth,
+              }),
+            }
+          ))
+        : (response = await fetch("https://localhost:7220/api/student", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }).catch((error) => {
+            console.log("error: " + error);
+            return { error: "Network Error" };
+          }));
+    }
 
     if (!response.ok) {
       if (response.status === undefined) return { error: "Network Error" };
       else return { error: "Invalid Email or Password" };
     }
 
-    console.log("Add new pressed", response);
     queryClient.invalidateQueries({ queryKey: ["students"] });
   };
 
@@ -80,29 +96,36 @@ export default function ModalView({ open, onClose }) {
     >
       <Box sx={style}>
         <Typography id="modal-modal-title" variant="h6" component="h2">
-          Add New User
+          {userData ? "Edit User" : "Add New User"}
         </Typography>
         <form>
-          <input
-            type="text"
-            name="email"
-            placeholder="Email"
-            autoComplete="new-password"
-            onChange={handleChange}
-          ></input>
+          {userData ? (
+            ""
+          ) : (
+            <input
+              type="text"
+              name="email"
+              placeholder="Email"
+              autoComplete="new-password"
+              onChange={handleChange}
+            ></input>
+          )}
           <br />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            autoComplete="new-password"
-            onChange={handleChange}
-          ></input>
+          {userData ? null : (
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              autoComplete="new-password"
+              onChange={handleChange}
+            ></input>
+          )}
           <br />
           <input
             type="text"
             name="first_name"
             placeholder="First Name"
+            value={formData.first_name}
             onChange={handleChange}
           ></input>
           <br />
@@ -110,6 +133,7 @@ export default function ModalView({ open, onClose }) {
             type="text"
             name="last_name"
             placeholder="Last Name"
+            value={formData.last_name}
             onChange={handleChange}
           ></input>
           <br />
@@ -119,6 +143,7 @@ export default function ModalView({ open, onClose }) {
             placeholder="Date of Birth"
             min="2018-01-01"
             max={today}
+            value={formData.date_of_birth}
             onChange={handleChange}
           ></input>
           <br />
@@ -127,7 +152,7 @@ export default function ModalView({ open, onClose }) {
             variant="contained"
             onClick={() => handleOnSubmit()}
           >
-            Add new
+            Confirm
           </Button>
           <Button
             sx={{ marginLeft: "10px", backgroundColor: "gray" }}
