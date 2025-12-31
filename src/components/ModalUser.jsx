@@ -62,7 +62,6 @@ export default function ModalUser({ userData, open, onClose }) {
             },
             body: JSON.stringify(formData),
           }).catch((error) => {
-            console.log("error: " + error);
             return { error: "Network Error" };
           }));
     }
@@ -77,7 +76,6 @@ export default function ModalUser({ userData, open, onClose }) {
 
   const handleOnSubmit = async () => {
     const result = await handleOnAddNew();
-    console.log(result);
     if (result != undefined) {
       if (result.error) {
         setErrMsg(result.error);

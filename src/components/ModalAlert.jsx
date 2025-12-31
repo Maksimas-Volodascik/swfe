@@ -1,7 +1,31 @@
-import { Modal } from "@mui/material";
+import { Box, Button, Modal, Typography } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 
-const ModalAlert = (open, onClose) => {
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  borderRadius: "5px",
+  boxShadow: 24,
+  p: 4,
+};
+
+export default function ModalAlert({ userId, open, onClose }) {
+  const queryClient = useQueryClient();
+
+  const handleOnDelete = (userId) => {
+    fetch("https://localhost:7220/api/student/" + userId, {
+      method: "DELETE",
+    });
+
+    queryClient.invalidateQueries({ queryKey: ["students"] }); //Force table refresh*/
+    onClose();
+  };
+
   return (
     <Modal
       open={open}
@@ -9,9 +33,32 @@ const ModalAlert = (open, onClose) => {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      Alert!
+      <Box sx={style}>
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          component="h2"
+          sx={{ textAlign: "center", marginBottom: "15px" }}
+        >
+          Are you sure?
+        </Typography>
+        <Box sx={{ textAlign: "center" }}>
+          <Button
+            color="success"
+            variant="contained"
+            onClick={() => handleOnDelete(userId)}
+          >
+            Confirm
+          </Button>
+          <Button
+            sx={{ marginLeft: "10px", backgroundColor: "gray" }}
+            variant="contained"
+            onClick={onClose}
+          >
+            Close
+          </Button>
+        </Box>
+      </Box>
     </Modal>
   );
-};
-
-export default ModalAlert;
+}

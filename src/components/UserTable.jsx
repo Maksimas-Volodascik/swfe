@@ -14,6 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Box } from "@mui/material";
 import { useState } from "react";
 import ModalUser from "./ModalUser";
+import ModalAlert from "./ModalAlert";
 
 const columns = [
   {
@@ -91,16 +92,22 @@ function fixedHeaderContent() {
 
 const UserTable = ({ rows }) => {
   const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [userData, setUserData] = useState();
+  const [deleteUser, setDeleteUser] = useState();
   const queryClient = useQueryClient();
 
   function rowContent(_index, row) {
     const handleOnDelete = (id) => {
-      fetch("https://localhost:7220/api/student/" + id, {
+      setDeleteUser(id);
+      setOpenDelete(true);
+      //setOpen(true);
+      /*fetch("https://localhost:7220/api/student/" + id, {
         method: "DELETE",
       });
 
-      queryClient.invalidateQueries({ queryKey: ["students"] }); //Force table refresh
+      queryClient.invalidateQueries({ queryKey: ["students"] }); //Force table refresh*/
+      console.log("onDelete action was performed");
     };
     const handleOnEdit = (row) => {
       setUserData(row);
@@ -155,6 +162,11 @@ const UserTable = ({ rows }) => {
         userData={userData}
         open={open}
         onClose={() => setOpen(false)}
+      />
+      <ModalAlert
+        userId={deleteUser}
+        open={openDelete}
+        onClose={() => setOpenDelete(false)}
       />
     </>
   );
