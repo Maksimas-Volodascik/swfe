@@ -10,7 +10,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso } from "react-virtuoso";
-import { useQueryClient } from "@tanstack/react-query";
 import { Box } from "@mui/material";
 import { useState } from "react";
 import ModalUser from "./ModalUser";
@@ -56,7 +55,10 @@ const VirtuosoTableComponents = {
   Table: (props) => (
     <Table
       {...props}
-      sx={{ borderCollapse: "separate", tableLayout: "fixed" }}
+      sx={{
+        borderCollapse: "separate",
+        tableLayout: "fixed",
+      }}
     />
   ),
   TableHead: React.forwardRef((props, ref) => (
@@ -95,18 +97,11 @@ const UserTable = ({ rows }) => {
   const [openDelete, setOpenDelete] = useState(false);
   const [userData, setUserData] = useState();
   const [deleteUser, setDeleteUser] = useState();
-  const queryClient = useQueryClient();
 
   function rowContent(_index, row) {
     const handleOnDelete = (id) => {
       setDeleteUser(id);
       setOpenDelete(true);
-      //setOpen(true);
-      /*fetch("https://localhost:7220/api/student/" + id, {
-        method: "DELETE",
-      });
-
-      queryClient.invalidateQueries({ queryKey: ["students"] }); //Force table refresh*/
       console.log("onDelete action was performed");
     };
     const handleOnEdit = (row) => {
@@ -173,3 +168,27 @@ const UserTable = ({ rows }) => {
 };
 
 export default UserTable;
+/*
+TODO: rewrite TableVirtuoso
+<TableVirtuoso
+      data={data}
+      components={{
+        Table: (props) => <table {...props} className="my-table" />,
+        TableRow: (props) => <tr {...props} className="my-row" />,
+        TableCell: (props) => <td {...props} className="my-cell" />
+      }}
+      fixedHeaderContent={() => (
+        <tr className="my-header">
+          <th>ID</th>
+          <th>Name</th>
+          <th>Value</th>
+        </tr>
+      )}
+      itemContent={(index, item) => (
+        <>
+          <td>{item.id}</td>
+          <td>{item.name}</td>
+          <td>{item.value}</td>
+        </>
+      )}
+    /> */

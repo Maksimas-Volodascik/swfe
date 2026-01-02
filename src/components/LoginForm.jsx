@@ -2,31 +2,32 @@ import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import { SignInPage } from "@toolpad/core/SignInPage";
 import { saveAccessToken } from "../lib/tokenService";
+import { API_URL } from "../lib/types";
 
 const providers = [{ id: "credentials", name: "Email and Password" }];
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  let response;
 
   const signIn = async (provider, formData) => {
-    const response = await fetch("https://localhost:7220/api/user/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: formData.get("email"),
-        password: formData.get("password"),
-      }),
-    }).catch((error) => {
-      console.log("error: " + error);
+    try {
+      response = await fetch(API_URL + "/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.get("email"),
+          password: formData.get("password"),
+        }),
+      });
+    } catch (e) {
+      console.log("Network error: ", e);
       return { error: "Network Error" };
-    });
-
-    if (!response.ok) {
-      if (response.status === undefined) return { error: "Network Error" };
-      else return { error: "Invalid Email or Password" };
     }
+
+    if (!response.ok) return { error: "Invalid Email or Password" };
 
     const { accessToken, refreshToken } = await response.json();
     saveAccessToken(accessToken);

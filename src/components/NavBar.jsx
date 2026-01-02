@@ -7,7 +7,8 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import FaceIcon from "@mui/icons-material/Face";
+import Face4Icon from "@mui/icons-material/Face4";
 
 const NavBar = () => {
   const handleNavAction = (index) => {
@@ -38,17 +39,17 @@ const NavBar = () => {
           <ListItem disablePadding>
             <ListItemButton href="students">
               <ListItemIcon sx={{ color: "inherit" }}>
-                <MailIcon />
+                <FaceIcon />
               </ListItemIcon>
               <ListItemText primary="Student List" />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton href="register">
+            <ListItemButton href="teachers">
               <ListItemIcon sx={{ color: "inherit" }}>
-                <MailIcon />
+                <Face4Icon />
               </ListItemIcon>
-              <ListItemText primary="Register" />
+              <ListItemText primary="Teacher List" />
             </ListItemButton>
           </ListItem>
         </List>

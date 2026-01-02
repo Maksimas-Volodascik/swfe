@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import ModalUser from "../../components/ModalUser";
 import { useState } from "react";
 import UserTableRow from "../../components/UserTableRow";
+import { API_URL } from "../../lib/types";
 
 const StudentList = () => {
   const [open, setOpen] = useState(false);
@@ -22,7 +23,7 @@ const StudentList = () => {
         style={{
           height: "100vh",
           width: "100%",
-          padding: "30px",
+          padding: "25px 50px 75px 50px",
         }}
       >
         {isPending ? (
@@ -50,6 +51,7 @@ const StudentList = () => {
               </Button>
               <ModalUser open={open} onClose={() => setOpen(false)} />
             </Box>
+
             <UserTableRow data={data} />
           </>
         )}
@@ -59,7 +61,7 @@ const StudentList = () => {
 };
 const getStudentList = async () => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  const response = await fetch("https://localhost:7220/api/student");
+  const response = await fetch(API_URL + "/api/student");
   if (!response.ok) {
     throw new Error("Failed to fetch students");
   }
