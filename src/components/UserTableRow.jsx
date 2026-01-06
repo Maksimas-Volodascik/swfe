@@ -6,22 +6,22 @@ function createData(id, name, lastname, birthdate, enrollmentdate, btn) {
   return { id, name, lastname, birthdate, enrollmentdate, btn };
 }
 
-const UserTableRow = ({ data }) => {
+const UserTableRow = ({ data, columns }) => {
+  console.log(data);
   const rows = [];
   data?.forEach((student) => {
-    const { id, first_name, last_name, date_of_birth, enrollment_date } =
-      student;
+    const { id, firstName, lastName, dateOfBirth, enrollmentDate } = student;
     rows.push(
       createData(
         id,
-        first_name,
-        last_name,
-        date_of_birth.substring(0, 10),
-        enrollment_date.substring(0, 10)
+        firstName,
+        lastName,
+        dateOfBirth.substring(0, 10),
+        enrollmentDate.substring(0, 10)
       )
     );
   });
-  return <UserTable rows={rows} />;
+  return <UserTable rows={rows} columns={columns} />;
 };
 
 export default UserTableRow;

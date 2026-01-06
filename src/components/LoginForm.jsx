@@ -31,7 +31,7 @@ const LoginForm = () => {
 
     const { accessToken, refreshToken } = await response.json();
     saveAccessToken(accessToken);
-    navigate("/register");
+    navigate("/dashboard");
     return {};
   };
 

@@ -15,39 +15,6 @@ import { useState } from "react";
 import ModalUser from "./ModalUser";
 import ModalAlert from "./ModalAlert";
 
-const columns = [
-  {
-    width: 5,
-    label: "ID",
-    dataKey: "id",
-  },
-  {
-    width: 100,
-    label: "First Name",
-    dataKey: "name",
-  },
-  {
-    width: 50,
-    label: "Last Name",
-    dataKey: "lastname",
-  },
-  {
-    width: 110,
-    label: "date_of_birth",
-    dataKey: "birthdate",
-  },
-  {
-    width: 130,
-    label: "enrollment_date",
-    dataKey: "enrollmentdate",
-  },
-  {
-    width: 100,
-    label: "",
-    dataKey: "btn",
-  },
-];
-
 const VirtuosoTableComponents = {
   Scroller: React.forwardRef((props, ref) => (
     <TableContainer component={Paper} {...props} ref={ref} />
@@ -70,7 +37,7 @@ const VirtuosoTableComponents = {
   )),
 };
 
-function fixedHeaderContent() {
+function fixedHeaderContent(columns) {
   return (
     <TableRow>
       {columns.map((column) => (
@@ -92,7 +59,7 @@ function fixedHeaderContent() {
   );
 }
 
-const UserTable = ({ rows }) => {
+const UserTable = ({ rows, columns }) => {
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [userData, setUserData] = useState();
@@ -144,13 +111,13 @@ const UserTable = ({ rows }) => {
       </>
     );
   }
-
+  console.log("Virtuoso row:", rows);
   return (
     <>
       <TableVirtuoso
         data={rows}
         components={VirtuosoTableComponents}
-        fixedHeaderContent={fixedHeaderContent}
+        fixedHeaderContent={() => fixedHeaderContent(columns)}
         itemContent={rowContent}
       />
       <ModalUser

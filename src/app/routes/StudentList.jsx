@@ -11,6 +11,38 @@ import UserTableRow from "../../components/UserTableRow";
 import { API_URL } from "../../lib/types";
 
 const StudentList = () => {
+  const columns = [
+    {
+      width: 5,
+      label: "ID",
+      dataKey: "id",
+    },
+    {
+      width: 100,
+      label: "First Name",
+      dataKey: "name",
+    },
+    {
+      width: 50,
+      label: "Last Name",
+      dataKey: "lastname",
+    },
+    {
+      width: 110,
+      label: "date_of_birth",
+      dataKey: "birthdate",
+    },
+    {
+      width: 130,
+      label: "enrollment_date",
+      dataKey: "enrollmentdate",
+    },
+    {
+      width: 100,
+      label: "",
+      dataKey: "btn",
+    },
+  ];
   const [open, setOpen] = useState(false);
   const { data, isPending } = useQuery({
     queryKey: ["students"],
@@ -52,7 +84,7 @@ const StudentList = () => {
               <ModalUser open={open} onClose={() => setOpen(false)} />
             </Box>
 
-            <UserTableRow data={data} />
+            <UserTableRow data={data} columns={columns} />
           </>
         )}
       </Paper>
@@ -61,7 +93,7 @@ const StudentList = () => {
 };
 const getStudentList = async () => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  const response = await fetch(API_URL + "/api/student");
+  const response = await fetch(API_URL + "/student");
   if (!response.ok) {
     throw new Error("Failed to fetch students");
   }
