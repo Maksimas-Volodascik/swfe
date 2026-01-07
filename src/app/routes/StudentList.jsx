@@ -7,47 +7,36 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ModalUser from "../../components/ModalUser";
 import { useState } from "react";
-import UserTableRow from "../../components/UserTableRow";
 import { API_URL } from "../../lib/types";
 
+function createData(id, name, lastname, birthdate, enrollmentdate, btn) {
+  return { id, name, lastname, birthdate, enrollmentdate, btn };
+}
+
 const StudentList = () => {
-  const columns = [
-    {
-      width: 5,
-      label: "ID",
-      dataKey: "id",
-    },
-    {
-      width: 100,
-      label: "First Name",
-      dataKey: "name",
-    },
-    {
-      width: 50,
-      label: "Last Name",
-      dataKey: "lastname",
-    },
-    {
-      width: 110,
-      label: "date_of_birth",
-      dataKey: "birthdate",
-    },
-    {
-      width: 130,
-      label: "enrollment_date",
-      dataKey: "enrollmentdate",
-    },
-    {
-      width: 100,
-      label: "",
-      dataKey: "btn",
-    },
-  ];
   const [open, setOpen] = useState(false);
   const { data, isPending } = useQuery({
     queryKey: ["students"],
     queryFn: getStudentList,
   });
+  const columns = [
+    { width: 5, label: "ID", dataKey: "id" },
+    { width: 100, label: "First Name", dataKey: "name" },
+    { width: 50, label: "Last Name", dataKey: "lastname" },
+    { width: 110, label: "date_of_birth", dataKey: "birthdate" },
+    { width: 130, label: "enrollment_date", dataKey: "enrollmentdate" },
+    { width: 100, label: "", dataKey: "btn" },
+  ];
+  const rows =
+    data?.map((student) =>
+      createData(
+        student.id,
+        student.firstName,
+        student.lastName,
+        student.dateOfBirth.substring(0, 10),
+        student.enrollmentDate.substring(0, 10)
+      )
+    ) || [];
 
   return (
     <>
@@ -84,7 +73,7 @@ const StudentList = () => {
               <ModalUser open={open} onClose={() => setOpen(false)} />
             </Box>
 
-            <UserTableRow data={data} columns={columns} />
+            <UserTable rows={rows} columns={columns} />
           </>
         )}
       </Paper>

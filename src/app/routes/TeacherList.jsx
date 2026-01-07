@@ -4,15 +4,34 @@ import { API_URL } from "../../lib/types";
 import { Box, Button, Paper } from "@mui/material";
 import loading from "../../assets/loading.svg";
 import ModalUser from "../../components/ModalUser";
-import UserTableRow from "../../components/UserTableRow";
+import UserTable from "../../components/UserTable";
+
+function createData(id, name, lastname, classid, btn) {
+  return { id, name, lastname, classid, btn };
+}
 
 const TeacherList = () => {
   const [open, setOpen] = useState(false);
-
   const { data, isPending } = useQuery({
     queryKey: ["teachers"],
     queryFn: getTeacherList,
   });
+  const columns = [
+    { width: 5, label: "ID", dataKey: "id" },
+    { width: 100, label: "First Name", dataKey: "name" },
+    { width: 100, label: "Last Name", dataKey: "lastname" },
+    { width: 100, label: "Class ID", dataKey: "classid" },
+    { width: 100, label: "", dataKey: "btn" },
+  ];
+  const rows =
+    data?.map((teachers) =>
+      createData(
+        teachers.id,
+        teachers.firstName,
+        teachers.lastName,
+        teachers.classId
+      )
+    ) || [];
 
   return (
     <>
@@ -49,7 +68,7 @@ const TeacherList = () => {
               <ModalUser open={open} onClose={() => setOpen(false)} />
             </Box>
 
-            <UserTableRow data={data} />
+            <UserTable rows={rows} columns={columns} />
           </>
         )}
       </Paper>

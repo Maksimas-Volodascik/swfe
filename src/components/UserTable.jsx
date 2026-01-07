@@ -95,7 +95,7 @@ const UserTable = ({ rows, columns }) => {
                     <EditIcon fontSize="inherit" />
                   </IconButton>
                   <IconButton
-                    onClick={() => handleOnDelete(row.id)}
+                    onClick={() => handleOnDelete(row)}
                     aria-label="delete"
                     size="large"
                   >
@@ -111,7 +111,7 @@ const UserTable = ({ rows, columns }) => {
       </>
     );
   }
-  console.log("Virtuoso row:", rows);
+  console.log(rows);
   return (
     <>
       <TableVirtuoso
@@ -135,27 +135,3 @@ const UserTable = ({ rows, columns }) => {
 };
 
 export default UserTable;
-/*
-TODO: rewrite TableVirtuoso
-<TableVirtuoso
-      data={data}
-      components={{
-        Table: (props) => <table {...props} className="my-table" />,
-        TableRow: (props) => <tr {...props} className="my-row" />,
-        TableCell: (props) => <td {...props} className="my-cell" />
-      }}
-      fixedHeaderContent={() => (
-        <tr className="my-header">
-          <th>ID</th>
-          <th>Name</th>
-          <th>Value</th>
-        </tr>
-      )}
-      itemContent={(index, item) => (
-        <>
-          <td>{item.id}</td>
-          <td>{item.name}</td>
-          <td>{item.value}</td>
-        </>
-      )}
-    /> */

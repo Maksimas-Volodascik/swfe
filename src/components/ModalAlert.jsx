@@ -1,6 +1,7 @@
 import { Box, Button, Modal, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import React, { use } from "react";
+import { API_URL } from "../lib/types";
 
 const style = {
   position: "absolute",
@@ -18,12 +19,14 @@ export default function ModalAlert({ userId, open, onClose }) {
   const queryClient = useQueryClient();
 
   const handleOnDelete = (userId) => {
-    fetch("https://localhost:7220/api/student/" + userId, {
+    console.log(userId);
+    /*
+    fetch(API_URL + "/user/" + userId, {
       method: "DELETE",
     });
 
-    queryClient.invalidateQueries({ queryKey: ["students"] }); //Force table refresh*/
-    onClose();
+    queryClient.invalidateQueries({ queryKey: ["students"] }); //Force table refresh
+    onClose();*/
   };
 
   return (
