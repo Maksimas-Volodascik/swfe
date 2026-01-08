@@ -15,11 +15,11 @@ const style = {
   p: 4,
 };
 
-export default function ModalAlert({ userId, open, onClose }) {
+export default function ModalAlert({ userData, open, onClose }) {
   const queryClient = useQueryClient();
 
-  const handleOnDelete = (userId) => {
-    console.log(userId);
+  const handleOnDelete = (userData) => {
+    console.log(userData.id);
     /*
     fetch(API_URL + "/user/" + userId, {
       method: "DELETE",
@@ -49,7 +49,7 @@ export default function ModalAlert({ userId, open, onClose }) {
           <Button
             color="success"
             variant="contained"
-            onClick={() => handleOnDelete(userId)}
+            onClick={() => handleOnDelete(userData)}
           >
             Confirm
           </Button>

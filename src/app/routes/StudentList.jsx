@@ -8,17 +8,22 @@ import Button from "@mui/material/Button";
 import ModalUser from "../../components/ModalUser";
 import { useState } from "react";
 import { API_URL } from "../../lib/types";
+import ModalAlert from "../../components/ModalAlert";
 
 function createData(id, name, lastname, birthdate, enrollmentdate, btn) {
   return { id, name, lastname, birthdate, enrollmentdate, btn };
 }
 
 const StudentList = () => {
-  const [open, setOpen] = useState(false);
+  const [openUserModal, setOpenUserModal] = useState(false);
+  const [openAlertModal, setOpenAlertModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
   const { data, isPending } = useQuery({
     queryKey: ["students"],
     queryFn: getStudentList,
   });
+
   const columns = [
     { width: 5, label: "ID", dataKey: "id" },
     { width: 100, label: "First Name", dataKey: "name" },
@@ -27,6 +32,7 @@ const StudentList = () => {
     { width: 130, label: "enrollment_date", dataKey: "enrollmentdate" },
     { width: 100, label: "", dataKey: "btn" },
   ];
+
   const rows =
     data?.map((student) =>
       createData(
@@ -37,6 +43,16 @@ const StudentList = () => {
         student.enrollmentDate.substring(0, 10)
       )
     ) || [];
+
+  const handleOnDelete = (data) => {
+    setSelectedUser(data);
+    setOpenAlertModal(true);
+  };
+
+  const handleOnEdit = (rows) => {
+    setSelectedUser(data);
+    setOpenUserModal(true);
+  };
 
   return (
     <>
@@ -66,14 +82,29 @@ const StudentList = () => {
               <Button
                 variant="outlined"
                 color="success"
-                onClick={() => setOpen(true)}
+                onClick={() => setOpenUserModal(true)}
               >
                 + Add new
               </Button>
-              <ModalUser open={open} onClose={() => setOpen(false)} />
+              <ModalUser
+                userData={selectedUser}
+                open={openUserModal}
+                onClose={() => (setOpenUserModal(false), setSelectedUser(null))}
+              />
+              <ModalAlert
+                userData={selectedUser}
+                open={openAlertModal}
+                onClose={() => (
+                  setOpenAlertModal(false), setSelectedUser(null)
+                )}
+              />
             </Box>
-
-            <UserTable rows={rows} columns={columns} />
+            <UserTable
+              rows={rows}
+              columns={columns}
+              onDelete={(data) => handleOnDelete(data)}
+              onEdit={(data) => handleOnEdit(data)}
+            />
           </>
         )}
       </Paper>

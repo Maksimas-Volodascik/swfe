@@ -59,23 +59,8 @@ function fixedHeaderContent(columns) {
   );
 }
 
-const UserTable = ({ rows, columns }) => {
-  const [open, setOpen] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
-  const [userData, setUserData] = useState();
-  const [deleteUser, setDeleteUser] = useState();
-
+const UserTable = ({ rows, columns, onDelete, onEdit }) => {
   function rowContent(_index, row) {
-    const handleOnDelete = (id) => {
-      setDeleteUser(id);
-      setOpenDelete(true);
-      console.log("onDelete action was performed");
-    };
-    const handleOnEdit = (row) => {
-      setUserData(row);
-      setOpen(true);
-    };
-
     return (
       <>
         <React.Fragment>
@@ -88,14 +73,14 @@ const UserTable = ({ rows, columns }) => {
               {column.dataKey === "btn" ? (
                 <Box>
                   <IconButton
-                    onClick={() => handleOnEdit(row)}
+                    onClick={() => onEdit(row)}
                     aria-label="delete"
                     size="large"
                   >
                     <EditIcon fontSize="inherit" />
                   </IconButton>
                   <IconButton
-                    onClick={() => handleOnDelete(row)}
+                    onClick={() => onDelete(row)}
                     aria-label="delete"
                     size="large"
                   >
@@ -111,7 +96,7 @@ const UserTable = ({ rows, columns }) => {
       </>
     );
   }
-  console.log(rows);
+
   return (
     <>
       <TableVirtuoso
@@ -119,16 +104,6 @@ const UserTable = ({ rows, columns }) => {
         components={VirtuosoTableComponents}
         fixedHeaderContent={() => fixedHeaderContent(columns)}
         itemContent={rowContent}
-      />
-      <ModalUser
-        userData={userData}
-        open={open}
-        onClose={() => setOpen(false)}
-      />
-      <ModalAlert
-        userId={deleteUser}
-        open={openDelete}
-        onClose={() => setOpenDelete(false)}
       />
     </>
   );

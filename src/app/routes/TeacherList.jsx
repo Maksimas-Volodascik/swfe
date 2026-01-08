@@ -5,13 +5,16 @@ import { Box, Button, Paper } from "@mui/material";
 import loading from "../../assets/loading.svg";
 import ModalUser from "../../components/ModalUser";
 import UserTable from "../../components/UserTable";
+import ModalAlert from "../../components/ModalAlert";
 
 function createData(id, name, lastname, classid, btn) {
   return { id, name, lastname, classid, btn };
 }
 
 const TeacherList = () => {
-  const [open, setOpen] = useState(false);
+  const [openUserModal, setOpenUserModal] = useState(false);
+  const [openAlertModal, setOpenAlertModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const { data, isPending } = useQuery({
     queryKey: ["teachers"],
     queryFn: getTeacherList,
@@ -32,6 +35,16 @@ const TeacherList = () => {
         teachers.classId
       )
     ) || [];
+
+  const handleOnDelete = (data) => {
+    setSelectedUser(data);
+    setOpenAlertModal(true);
+  };
+
+  const handleOnEdit = (rows) => {
+    setSelectedUser(data);
+    setOpenUserModal(true);
+  };
 
   return (
     <>
@@ -61,14 +74,30 @@ const TeacherList = () => {
               <Button
                 variant="outlined"
                 color="success"
-                onClick={() => setOpen(true)}
+                onClick={() => setOpenUserModal(true)}
               >
                 + Add new
               </Button>
-              <ModalUser open={open} onClose={() => setOpen(false)} />
+              <ModalUser
+                userData={selectedUser}
+                open={openUserModal}
+                onClose={() => (setOpenUserModal(false), setSelectedUser(null))}
+              />
+              <ModalAlert
+                userData={selectedUser}
+                open={openAlertModal}
+                onClose={() => (
+                  setOpenAlertModal(false), setSelectedUser(null)
+                )}
+              />
             </Box>
 
-            <UserTable rows={rows} columns={columns} />
+            <UserTable
+              rows={rows}
+              columns={columns}
+              onDelete={(data) => handleOnDelete(data)}
+              onEdit={(data) => handleOnEdit(data)}
+            />
           </>
         )}
       </Paper>
