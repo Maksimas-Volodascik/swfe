@@ -31,22 +31,26 @@ function useCalendar(date, locale) {
 
   const daysInMonth = endOfMonth.getDate();
 
-  const days = [];
+  const dates = [];
   const nextDay = new Date(startOfMonth);
   for (let i = 0; i < daysInMonth; i++) {
     nextDay.setDate(startOfMonth.getDate() + i);
-    days.push({
+    dates.push({
       weekDay: nextDay.toLocaleDateString(locale, { weekday: "short" }),
-      day: new Date(
+      date: new Date(
         startOfMonth.getFullYear(),
         startOfMonth.getMonth(),
         i + 1
       ).toLocaleDateString(locale),
+      day: i + 1,
     });
   }
-  console.log(days);
 
-  return { startOfMonth, goNext, goPrev, days };
+  for (let i = 0; i < daysInMonth; i++) {
+    console.log("day:", i + 1);
+  }
+
+  return { startOfMonth, goNext, goPrev, dates, weekdays };
 }
 
 export default useCalendar;

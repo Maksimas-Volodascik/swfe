@@ -61,38 +61,38 @@ function fixedHeaderContent(columns) {
 
 const UserTable = ({ rows, columns, onDelete, onEdit }) => {
   function rowContent(_index, row) {
+    console.log("row", row);
+    console.log("columns", columns);
     return (
       <>
-        <React.Fragment>
-          {columns.map((column) => (
-            <TableCell
-              key={column.dataKey}
-              align={column.label === "ID" ? "left" : "center"}
-            >
-              {row[column.dataKey]}
-              {column.dataKey === "btn" ? (
-                <Box>
-                  <IconButton
-                    onClick={() => onEdit(row)}
-                    aria-label="delete"
-                    size="large"
-                  >
-                    <EditIcon fontSize="inherit" />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => onDelete(row)}
-                    aria-label="delete"
-                    size="large"
-                  >
-                    <DeleteIcon fontSize="inherit" />
-                  </IconButton>
-                </Box>
-              ) : (
-                ""
-              )}
-            </TableCell>
-          ))}
-        </React.Fragment>
+        {columns.map((column) => (
+          <TableCell
+            key={column.dataKey}
+            align={column.label === "ID" ? "left" : "center"}
+          >
+            {row[column.dataKey]}
+            {column.dataKey === "btn" ? (
+              <Box>
+                <IconButton
+                  onClick={() => onEdit(row)}
+                  aria-label="delete"
+                  size="large"
+                >
+                  <EditIcon fontSize="inherit" />
+                </IconButton>
+                <IconButton
+                  onClick={() => onDelete(row)}
+                  aria-label="delete"
+                  size="large"
+                >
+                  <DeleteIcon fontSize="inherit" />
+                </IconButton>
+              </Box>
+            ) : (
+              ""
+            )}
+          </TableCell>
+        ))}
       </>
     );
   }
