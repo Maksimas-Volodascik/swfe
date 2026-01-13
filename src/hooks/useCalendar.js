@@ -46,11 +46,35 @@ function useCalendar(date, locale) {
     });
   }
 
-  for (let i = 0; i < daysInMonth; i++) {
-    console.log("day:", i + 1);
+  let week = [];
+  let tempWeek = [];
+
+  dates.forEach((element) => {
+    console.log(element);
+    if (element.weekDay === "Sun") {
+      tempWeek.push(element.day);
+      week.push(tempWeek);
+      tempWeek = [];
+    } else {
+      tempWeek.push(element.day);
+    }
+    if (element.day === dates.length) {
+      week.push(tempWeek);
+    }
+  });
+
+  let startMonthIndex = 0;
+  if (startOfMonth.getDay() === 0) {
+    startMonthIndex = 7;
+  } else {
+    startMonthIndex = startOfMonth.getDay();
   }
 
-  return { startOfMonth, goNext, goPrev, dates, weekdays };
+  for (let i = 1; i < startMonthIndex; i++) {
+    week[0].unshift("");
+  }
+
+  return { startOfMonth, goNext, goPrev, dates, weekdays, week };
 }
 
 export default useCalendar;
