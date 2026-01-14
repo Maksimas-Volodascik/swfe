@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 
 function useCalendar(date, locale) {
   const [startOfMonth, setStartOfMonth] = useState(
@@ -6,7 +6,7 @@ function useCalendar(date, locale) {
   );
 
   const goNext = useCallback(() => {
-    //useCallback needed to prevent infinite loop
+    //useCallback needed to prevent infinite loop on each rerender. It does not call the function again
     setStartOfMonth(
       (date) => new Date(date.getFullYear(), date.getMonth() + 1, 1)
     );
@@ -17,6 +17,8 @@ function useCalendar(date, locale) {
       (date) => new Date(date.getFullYear(), date.getMonth() - 1, 1)
     );
   }, []);
+
+  const today = new Date().getDate();
 
   let weekdays = Array.from({ length: 7 }, (_, i) => {
     const base = new Date(2025, 11, i + 1); //December 2025 Monday is 1st day of the month
@@ -50,7 +52,6 @@ function useCalendar(date, locale) {
   let tempWeek = [];
 
   dates.forEach((element) => {
-    console.log(element);
     if (element.weekDay === "Sun") {
       tempWeek.push(element.day);
       week.push(tempWeek);
@@ -73,8 +74,7 @@ function useCalendar(date, locale) {
   for (let i = 1; i < startMonthIndex; i++) {
     week[0].unshift("");
   }
-
-  return { startOfMonth, goNext, goPrev, dates, weekdays, week };
+  return { startOfMonth, goNext, goPrev, weekdays, week, today };
 }
 
 export default useCalendar;
