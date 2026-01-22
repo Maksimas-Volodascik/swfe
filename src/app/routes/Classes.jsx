@@ -1,8 +1,15 @@
 import { Box, Button, Grid, Paper, Stack, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { API_URL } from "../../lib/types";
 
 const Classes = () => {
+  const { data, isPending } = useQuery({
+    queryKey: ["class-subjects"],
+    queryFn: getClassSubjectsAsync,
+  });
+
   const x = [
     "Mathematics",
     "Programming",
@@ -17,7 +24,7 @@ const Classes = () => {
   ];
 
   const onHandleClick = (i) => {
-    console.log(i);
+    console.log("Clicked add for class: " + i);
   };
 
   return (
@@ -39,9 +46,9 @@ const Classes = () => {
           overflow: "auto",
         }}
       >
-        {x.map((num) => (
+        {data.map((data) => (
           <Paper
-            key={num}
+            key={data.subjectCode}
             sx={{
               width: "330px",
               height: "400px",
@@ -68,7 +75,7 @@ const Classes = () => {
                   fontFamily: "monospace",
                 }}
               >
-                {num}
+                {data.subjectName}
                 <Button
                   color="success"
                   sx={{
@@ -106,7 +113,7 @@ const Classes = () => {
                 >
                   Code:
                 </Typography>{" "}
-                MATH101
+                {data.subjectCode}
                 <br />
                 <Typography
                   sx={{ fontSize: "12px" }}
@@ -115,7 +122,7 @@ const Classes = () => {
                 >
                   Room:
                 </Typography>{" "}
-                101,102
+                {data.room}
                 <br />
                 <Typography
                   sx={{ fontSize: "12px" }}
@@ -124,7 +131,7 @@ const Classes = () => {
                 >
                   Academic Year:
                 </Typography>{" "}
-                2026-2027
+                {data.academicYear}
               </Typography>
             </Box>
             <Box
@@ -133,7 +140,7 @@ const Classes = () => {
                 paddingTop: "5px",
               }}
             >
-              <Typography sx={{ fontSize: "12px" }}>
+              <Typography sx={{ fontSize: "12px", textAlign: "left" }}>
                 <Typography
                   sx={{ fontSize: "12px" }}
                   component="span"
@@ -141,11 +148,7 @@ const Classes = () => {
                 >
                   Description:
                 </Typography>{" "}
-                Our classes are designed to provide a dynamic and engaging
-                learning experience tailored to a variety of skill levels. Each
-                session combines theoretical knowledge with practical
-                application, encouraging participants to actively explore
-                concepts and develop new competencies.
+                {data.description}
               </Typography>
             </Box>
             <Box
@@ -171,6 +174,16 @@ const Classes = () => {
       </Grid>
     </Box>
   );
+};
+
+const getClassSubjectsAsync = async () => {
+  let response = [];
+  try {
+    response = await fetch(API_URL + "/class-subjects");
+  } catch (err) {
+    console.log("Error: ", err);
+  }
+  return await response.json();
 };
 
 export default Classes;
