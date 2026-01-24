@@ -46,7 +46,7 @@ const Classes = () => {
             overflow: "auto",
           }}
         >
-          {data.map((data) => (
+          {data?.map((data) => (
             <Paper
               key={data.subjectCode}
               sx={{

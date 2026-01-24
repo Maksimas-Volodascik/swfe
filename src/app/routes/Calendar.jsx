@@ -36,7 +36,7 @@ const Calendar = ({ locale = navigator.language }) => {
             height: "100px",
             fontWeight: "Bold",
             "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.08)", // darker
+              backgroundColor: "rgba(0, 0, 0, 0.08)",
             },
           }}
           title={("Today:", isToday.toDateString())}
@@ -65,7 +65,7 @@ const Calendar = ({ locale = navigator.language }) => {
             width: "200px",
             height: "100px",
             "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.08)", // darker
+              backgroundColor: "rgba(0, 0, 0, 0.08)",
             },
           }}
           //onClick={() => handleOnClick(rowIndex, cellIndex)}
