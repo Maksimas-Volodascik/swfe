@@ -18,7 +18,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 const Calendar = ({ locale = navigator.language }) => {
   const { startOfMonth, goNext, goPrev, weekdays, week, today } = useCalendar(
     new Date(),
-    "en-US" //implement locale in the future for other languages
+    "en-US", //implement locale in the future for other languages
   );
 
   const rowEvents = (day, cellIndex, rowIndex) => {
@@ -35,7 +35,11 @@ const Calendar = ({ locale = navigator.language }) => {
             width: "200px",
             height: "100px",
             fontWeight: "Bold",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.08)", // darker
+            },
           }}
+          title={("Today:", isToday.toDateString())}
           //onClick={() => handleOnClick(rowIndex, cellIndex)}
           key={(rowIndex, cellIndex)}
         >
@@ -60,6 +64,9 @@ const Calendar = ({ locale = navigator.language }) => {
             verticalAlign: "bottom",
             width: "200px",
             height: "100px",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.08)", // darker
+            },
           }}
           //onClick={() => handleOnClick(rowIndex, cellIndex)}
           key={(rowIndex, cellIndex)}
@@ -70,7 +77,6 @@ const Calendar = ({ locale = navigator.language }) => {
     }
   };
 
-  //<h1>Selected Month: {startOfMonth.toLocaleDateString()}</h1>
   return (
     <>
       <Box
@@ -133,7 +139,7 @@ const Calendar = ({ locale = navigator.language }) => {
             {week.map((row, rowIndex) => (
               <TableRow key={rowIndex}>
                 {row.map((day, cellIndex) =>
-                  rowEvents(day, cellIndex, rowIndex)
+                  rowEvents(day, cellIndex, rowIndex),
                 )}
               </TableRow>
             ))}
