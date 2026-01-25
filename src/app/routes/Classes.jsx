@@ -84,7 +84,7 @@ const Classes = () => {
                       top: "-2px",
                       borderRadius: "10px",
                     }}
-                    onClick={() => onHandleClick(num)}
+                    onClick={() => onHandleClick(data.subjectName)}
                   >
                     <AddIcon />
                   </Button>

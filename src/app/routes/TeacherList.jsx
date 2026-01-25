@@ -6,6 +6,7 @@ import loading from "../../assets/loading.svg";
 import ModalUser from "../../components/ModalUser";
 import UserTable from "../../components/UserTable";
 import ModalAlert from "../../components/ModalAlert";
+import { getTeacherList } from "../../lib/services/teachers.services";
 
 function createData(id, name, lastname, classid, btn) {
   return { id, name, lastname, classid, btn };
@@ -15,10 +16,12 @@ const TeacherList = () => {
   const [openUserModal, setOpenUserModal] = useState(false);
   const [openAlertModal, setOpenAlertModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [mode, setMode] = useState("add"); // "add" or "edit"
   const { data, isPending } = useQuery({
     queryKey: ["teachers"],
     queryFn: getTeacherList,
   });
+
   const columns = [
     { width: 5, label: "ID", dataKey: "id" },
     { width: 100, label: "First Name", dataKey: "name" },
@@ -32,8 +35,8 @@ const TeacherList = () => {
         teachers.id,
         teachers.firstName,
         teachers.lastName,
-        teachers.classId
-      )
+        teachers.classId,
+      ),
     ) || [];
 
   const handleOnDelete = (data) => {
@@ -41,9 +44,10 @@ const TeacherList = () => {
     setOpenAlertModal(true);
   };
 
-  const handleOnEdit = (rows) => {
+  const handleOnEdit = (data) => {
     setSelectedUser(data);
     setOpenUserModal(true);
+    setMode("edit");
   };
 
   return (
@@ -74,11 +78,13 @@ const TeacherList = () => {
               <Button
                 variant="outlined"
                 color="success"
-                onClick={() => setOpenUserModal(true)}
+                onClick={() => (setMode("add"), setOpenUserModal(true))}
               >
                 + Add new
               </Button>
               <ModalUser
+                userType="teacher"
+                mode={mode}
                 userData={selectedUser}
                 open={openUserModal}
                 onClose={() => (setOpenUserModal(false), setSelectedUser(null))}
@@ -103,16 +109,6 @@ const TeacherList = () => {
       </Paper>
     </>
   );
-};
-
-const getTeacherList = async () => {
-  let response = [];
-  try {
-    response = await fetch(API_URL + "/teacher");
-  } catch (err) {
-    console.log("Error: ", err);
-  }
-  return await response.json();
 };
 
 export default TeacherList;

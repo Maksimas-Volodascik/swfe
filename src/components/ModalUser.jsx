@@ -5,6 +5,8 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { addTeacher } from "../lib/services/teachers.services";
+import { addStudent } from "../lib/services/students.services";
 
 const style = {
   position: "absolute",
@@ -18,7 +20,7 @@ const style = {
   p: 4,
 };
 
-export default function ModalUser({ userData, open, onClose }) {
+export default function ModalUser({ userType, mode, userData, open, onClose }) {
   if (!open) return null;
   const queryClient = useQueryClient();
   const today = new Date().toISOString().split("T")[0];
@@ -26,9 +28,9 @@ export default function ModalUser({ userData, open, onClose }) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    first_name: userData ? userData.name : "",
-    last_name: userData ? userData.lastname : "",
-    date_of_birth: userData ? userData.birthdate : today,
+    firstName: userData ? userData.name : "",
+    lastName: userData ? userData.lastname : "",
+    dateOfBirth: userData ? userData.birthdate : today,
   });
 
   const handleChange = (e) => {
@@ -49,11 +51,11 @@ export default function ModalUser({ userData, open, onClose }) {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                first_name: formData.first_name,
-                last_name: formData.last_name,
-                date_of_birth: formData.date_of_birth,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                dateOfBirth: formData.dateOfBirth,
               }),
-            }
+            },
           ))
         : (response = await fetch("https://localhost:7220/api/student", {
             method: "POST",
@@ -75,6 +77,17 @@ export default function ModalUser({ userData, open, onClose }) {
   };
 
   const handleOnSubmit = async () => {
+    const response =
+      mode === "add"
+        ? userType === "teacher"
+          ? addTeacher(formData)
+          : addStudent(formData)
+        : userType === "teacher"
+          ? editTeacher(userData.id, formData)
+          : editStudent(userData.id, formData);
+
+    console.log(response);
+    /*
     const result = await handleOnAddNew();
     if (result != undefined) {
       if (result.error) {
@@ -82,7 +95,7 @@ export default function ModalUser({ userData, open, onClose }) {
       }
     } else {
       onClose();
-    }
+    }*/
   };
 
   return (
@@ -121,27 +134,27 @@ export default function ModalUser({ userData, open, onClose }) {
           <br />
           <input
             type="text"
-            name="first_name"
+            name="firstName"
             placeholder="First Name"
-            value={formData.first_name}
+            value={formData.firstName}
             onChange={handleChange}
           ></input>
           <br />
           <input
             type="text"
-            name="last_name"
+            name="lastName"
             placeholder="Last Name"
-            value={formData.last_name}
+            value={formData.lastName}
             onChange={handleChange}
           ></input>
           <br />
           <input
             type="date"
-            name="date_of_birth"
+            name="dateOfBirth"
             placeholder="Date of Birth"
             min="2018-01-01"
             max={today}
-            value={formData.date_of_birth}
+            value={formData.dateOfBirth}
             onChange={handleChange}
           ></input>
           <br />

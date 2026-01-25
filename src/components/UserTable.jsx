@@ -61,8 +61,6 @@ function fixedHeaderContent(columns) {
 
 const UserTable = ({ rows, columns, onDelete, onEdit }) => {
   function rowContent(_index, row) {
-    console.log("row", row);
-    console.log("columns", columns);
     return (
       <>
         {columns.map((column) => (
@@ -75,7 +73,7 @@ const UserTable = ({ rows, columns, onDelete, onEdit }) => {
               <Box>
                 <IconButton
                   onClick={() => onEdit(row)}
-                  aria-label="delete"
+                  aria-label="edit"
                   size="large"
                 >
                   <EditIcon fontSize="inherit" />

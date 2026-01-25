@@ -18,7 +18,7 @@ const StudentList = () => {
   const [openUserModal, setOpenUserModal] = useState(false);
   const [openAlertModal, setOpenAlertModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-
+  const [mode, setMode] = useState("add");
   const { data, isPending } = useQuery({
     queryKey: ["students"],
     queryFn: getStudentList,
@@ -40,8 +40,8 @@ const StudentList = () => {
         student.firstName,
         student.lastName,
         student.dateOfBirth.substring(0, 10),
-        student.enrollmentDate.substring(0, 10)
-      )
+        student.enrollmentDate.substring(0, 10),
+      ),
     ) || [];
 
   const handleOnDelete = (data) => {
@@ -49,9 +49,10 @@ const StudentList = () => {
     setOpenAlertModal(true);
   };
 
-  const handleOnEdit = (rows) => {
+  const handleOnEdit = (data) => {
     setSelectedUser(data);
     setOpenUserModal(true);
+    setMode("edit");
   };
 
   return (
@@ -82,11 +83,13 @@ const StudentList = () => {
               <Button
                 variant="outlined"
                 color="success"
-                onClick={() => setOpenUserModal(true)}
+                onClick={() => (setMode("add"), setOpenUserModal(true))}
               >
                 + Add new
               </Button>
               <ModalUser
+                userType="student"
+                mode={mode}
                 userData={selectedUser}
                 open={openUserModal}
                 onClose={() => (setOpenUserModal(false), setSelectedUser(null))}
