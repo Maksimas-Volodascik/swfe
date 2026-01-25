@@ -15,6 +15,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import FamilyIcon from "@mui/icons-material/FamilyRestroom";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import { Link } from "react-router-dom";
 
 const NavBar = () => {
   const handleNavAction = (index) => {
@@ -35,7 +36,7 @@ const NavBar = () => {
       >
         <List sx={{ paddingTop: "20px" }}>
           <ListItem disablePadding>
-            <ListItemButton href="dashboard">
+            <ListItemButton component={Link} to="dashboard">
               <ListItemIcon sx={{ color: "inherit" }}>
                 <InboxIcon />
               </ListItemIcon>
@@ -43,7 +44,7 @@ const NavBar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton href="students">
+            <ListItemButton component={Link} to="students">
               <ListItemIcon sx={{ color: "inherit" }}>
                 <FaceIcon />
               </ListItemIcon>
@@ -51,7 +52,7 @@ const NavBar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton href="teachers">
+            <ListItemButton component={Link} to="teachers">
               <ListItemIcon sx={{ color: "inherit" }}>
                 <Face4Icon />
               </ListItemIcon>
@@ -59,7 +60,7 @@ const NavBar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton href="classes">
+            <ListItemButton component={Link} to="classes">
               <ListItemIcon sx={{ color: "inherit" }}>
                 <ClassIcon />
               </ListItemIcon>
@@ -67,7 +68,7 @@ const NavBar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton href="grades">
+            <ListItemButton component={Link} to="grades">
               <ListItemIcon sx={{ color: "inherit" }}>
                 <GradeIcon />
               </ListItemIcon>
@@ -75,7 +76,7 @@ const NavBar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton href="settings">
+            <ListItemButton component={Link} to="settings">
               <ListItemIcon sx={{ color: "inherit" }}>
                 <SettingsIcon />
               </ListItemIcon>
@@ -83,7 +84,7 @@ const NavBar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton href="family-tree">
+            <ListItemButton component={Link} to="family-tree">
               <ListItemIcon sx={{ color: "inherit" }}>
                 <FamilyIcon />
               </ListItemIcon>
@@ -91,7 +92,7 @@ const NavBar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton href="learning-material">
+            <ListItemButton component={Link} to="learning-material">
               <ListItemIcon sx={{ color: "inherit" }}>
                 <MenuBookIcon />
               </ListItemIcon>
@@ -99,7 +100,7 @@ const NavBar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton href="calendar">
+            <ListItemButton component={Link} to="calendar">
               <ListItemIcon sx={{ color: "inherit" }}>
                 <CalendarMonthIcon />
               </ListItemIcon>
