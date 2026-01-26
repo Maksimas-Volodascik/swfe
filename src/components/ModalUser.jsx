@@ -5,8 +5,8 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { addTeacher } from "../lib/services/teachers.services";
-import { addStudent } from "../lib/services/students.services";
+import { addTeacher, editTeacher } from "../lib/services/teachers.services";
+import { addStudent, editStudent } from "../lib/services/students.services";
 
 const style = {
   position: "absolute",
@@ -38,64 +38,23 @@ export default function ModalUser({ userType, mode, userData, open, onClose }) {
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleOnAddNew = async () => {
-    // TODO: check if provided formData is valid
-    let response;
-    {
-      userData
-        ? (response = await fetch(
-            "https://localhost:7220/api/student/" + userData.id,
-            {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                dateOfBirth: formData.dateOfBirth,
-              }),
-            },
-          ))
-        : (response = await fetch("https://localhost:7220/api/student", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-          }).catch((error) => {
-            return { error: "Network Error" };
-          }));
-    }
-
-    if (!response.ok) {
-      if (response.status === undefined) return { error: "Network Error" };
-      else return { error: "Invalid Email or Password" };
-    }
-
-    queryClient.invalidateQueries({ queryKey: ["students"] });
-  };
-
   const handleOnSubmit = async () => {
     const response =
       mode === "add"
-        ? userType === "teacher"
-          ? addTeacher(formData)
-          : addStudent(formData)
-        : userType === "teacher"
-          ? editTeacher(userData.id, formData)
-          : editStudent(userData.id, formData);
+        ? userType === "teachers"
+          ? await addTeacher(formData)
+          : await addStudent(formData)
+        : userType === "teachers"
+          ? await editTeacher(userData.id, formData)
+          : await editStudent(userData.id, formData);
 
-    console.log(response);
-    /*
-    const result = await handleOnAddNew();
-    if (result != undefined) {
-      if (result.error) {
-        setErrMsg(result.error);
-      }
+    setErrMsg(response.message);
+    if (response.message) {
+      setErrMsg(response.message);
     } else {
+      queryClient.invalidateQueries({ queryKey: [userType] });
       onClose();
-    }*/
+    }
   };
 
   return (

@@ -7,8 +7,8 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ModalUser from "../../components/ModalUser";
 import { useState } from "react";
-import { API_URL } from "../../lib/types";
 import ModalAlert from "../../components/ModalAlert";
+import { getStudentList } from "../../lib/services/students.services";
 
 function createData(id, name, lastname, birthdate, enrollmentdate, btn) {
   return { id, name, lastname, birthdate, enrollmentdate, btn };
@@ -22,6 +22,7 @@ const StudentList = () => {
   const { data, isPending } = useQuery({
     queryKey: ["students"],
     queryFn: getStudentList,
+    staleTime: 1000 * 60 * 5,
   });
 
   const columns = [
@@ -88,13 +89,14 @@ const StudentList = () => {
                 + Add new
               </Button>
               <ModalUser
-                userType="student"
+                userType="students"
                 mode={mode}
                 userData={selectedUser}
                 open={openUserModal}
                 onClose={() => (setOpenUserModal(false), setSelectedUser(null))}
               />
               <ModalAlert
+                userType="students"
                 userData={selectedUser}
                 open={openAlertModal}
                 onClose={() => (
@@ -114,13 +116,5 @@ const StudentList = () => {
     </>
   );
 };
-const getStudentList = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  const response = await fetch(API_URL + "/student");
-  if (!response.ok) {
-    throw new Error("Failed to fetch students");
-  }
 
-  return await response.json();
-};
 export default StudentList;

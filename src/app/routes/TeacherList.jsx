@@ -20,6 +20,7 @@ const TeacherList = () => {
   const { data, isPending } = useQuery({
     queryKey: ["teachers"],
     queryFn: getTeacherList,
+    staleTime: 1000 * 60 * 5,
   });
 
   const columns = [
@@ -83,13 +84,14 @@ const TeacherList = () => {
                 + Add new
               </Button>
               <ModalUser
-                userType="teacher"
+                userType="teachers"
                 mode={mode}
                 userData={selectedUser}
                 open={openUserModal}
                 onClose={() => (setOpenUserModal(false), setSelectedUser(null))}
               />
               <ModalAlert
+                userType="teachers"
                 userData={selectedUser}
                 open={openAlertModal}
                 onClose={() => (

@@ -1,7 +1,7 @@
 import { Box, Button, Modal, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import React, { use } from "react";
-import { API_URL } from "../lib/types";
+import { deleteTeacher } from "../lib/services/teachers.services";
+import { deleteStudent } from "../lib/services/students.services";
 
 const style = {
   position: "absolute",
@@ -15,18 +15,21 @@ const style = {
   p: 4,
 };
 
-export default function ModalAlert({ userData, open, onClose }) {
+export default function ModalAlert({ userType, userData, open, onClose }) {
   const queryClient = useQueryClient();
 
-  const handleOnDelete = (userData) => {
-    console.log(userData.id);
-    /*
-    fetch(API_URL + "/user/" + userId, {
-      method: "DELETE",
-    });
+  const handleOnDelete = async (userData) => {
+    const response =
+      userType === "teachers"
+        ? await deleteTeacher(userData.id)
+        : await deleteStudent(userData.id);
 
-    queryClient.invalidateQueries({ queryKey: ["students"] }); //Force table refresh
-    onClose();*/
+    if (response.message) {
+      console.error("Error occured:", response.message);
+    } else {
+      queryClient.invalidateQueries({ queryKey: [userType] });
+      onClose();
+    }
   };
 
   return (
