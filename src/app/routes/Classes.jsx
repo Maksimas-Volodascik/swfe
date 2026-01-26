@@ -3,12 +3,13 @@ import AddIcon from "@mui/icons-material/Add";
 import React from "react";
 import loading from "../../assets/loading.svg";
 import { useQuery } from "@tanstack/react-query";
-import { API_URL } from "../../lib/types";
+import { getClassSubjects } from "../../lib/services/classes.services";
 
 const Classes = () => {
-  const { data, isPending } = useQuery({
+  const { data: classes = [], isPending } = useQuery({
     queryKey: ["class-subjects"],
-    queryFn: getClassSubjectsAsync,
+    queryFn: getClassSubjects,
+    staleTime: 1000 * 60 * 5,
   });
 
   const onHandleClick = (i) => {
@@ -46,7 +47,7 @@ const Classes = () => {
             overflow: "auto",
           }}
         >
-          {data?.map((data) => (
+          {classes.map((data) => (
             <Paper
               key={data.subjectCode}
               sx={{
@@ -175,16 +176,6 @@ const Classes = () => {
       )}
     </Box>
   );
-};
-
-const getClassSubjectsAsync = async () => {
-  let response = [];
-  try {
-    response = await fetch(API_URL + "/class-subjects");
-  } catch (err) {
-    console.log("Error: ", err);
-  }
-  return await response.json();
 };
 
 export default Classes;
