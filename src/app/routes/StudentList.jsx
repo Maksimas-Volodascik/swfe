@@ -19,7 +19,7 @@ const StudentList = () => {
   const [openAlertModal, setOpenAlertModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [mode, setMode] = useState("add");
-  const { data, isPending } = useQuery({
+  const { data: students = [], isPending } = useQuery({
     queryKey: ["students"],
     queryFn: getStudentList,
     staleTime: 1000 * 60 * 5,
@@ -35,7 +35,7 @@ const StudentList = () => {
   ];
 
   const rows =
-    data?.map((student) =>
+    students.map((student) =>
       createData(
         student.id,
         student.firstName,

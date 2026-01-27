@@ -3,15 +3,8 @@ import axios from "axios";
 import { api } from "../types";
 
 export const getTeacherList = async () => {
-  try {
-    const { data } = await api.get(`/teacher`);
-    return data;
-  } catch (error) {
-    if (error.response) {
-      return { message: error.response.data?.message };
-    }
-    return { message: "Network Error" };
-  }
+  const { data } = await api.get(`/teacher`);
+  return data;
 };
 
 export const editTeacher = async (teacherId, teacherData) => {
