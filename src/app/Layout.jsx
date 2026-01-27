@@ -14,6 +14,7 @@ const Layout = () => {
           display: "grid",
           gridTemplateRows: "60px 1fr",
           gridTemplateColumns: "250px 1fr",
+          overflow: "hidden",
         }}
       >
         <Box sx={{ gridColumn: "1/-1", position: "relative", zIndex: 10 }}>
@@ -22,7 +23,7 @@ const Layout = () => {
         <Box sx={{ gridRow: 2 }}>
           <NavBar />
         </Box>
-        <Box sx={{ gridRow: 2 }}>
+        <Box sx={{ gridRow: 2, overflowY: "auto" }}>
           <Outlet />
         </Box>
       </Box>
