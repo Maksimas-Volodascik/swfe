@@ -3,17 +3,20 @@ import AddIcon from "@mui/icons-material/Add";
 import React from "react";
 import loading from "../../assets/loading.svg";
 import { useQuery } from "@tanstack/react-query";
-import { getClassSubjects } from "../../lib/services/classes.services";
+import {
+  enrollStudent,
+  getClassSubjects,
+} from "../../lib/services/classes.services";
 
 const Classes = () => {
   const { data: classes = [], isPending } = useQuery({
     queryKey: ["class-subjects"],
     queryFn: getClassSubjects,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 30,
   });
 
-  const onHandleClick = (i) => {
-    console.log("Clicked add for class: " + i);
+  const onHandleClick = (classSubjectId) => {
+    enrollStudent(classSubjectId);
   };
 
   return (
@@ -85,7 +88,7 @@ const Classes = () => {
                       top: "-2px",
                       borderRadius: "10px",
                     }}
-                    onClick={() => onHandleClick(data.subjectName)}
+                    onClick={() => onHandleClick(data.id)}
                   >
                     <AddIcon />
                   </Button>

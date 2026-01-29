@@ -42,7 +42,7 @@ export function getRole() {
     return "none";
   }
 
-  const parsedToken = parseJWT(getAccessToken());
+  const parsedToken = parseJWT(token);
   if (!parsedToken) return null;
   return parsedToken[roleURI];
 }
