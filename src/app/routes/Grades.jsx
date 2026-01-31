@@ -21,6 +21,9 @@ import {
 } from "@mui/material";
 
 import useCalendar from "../../hooks/useCalendar";
+import { gradesBySubject } from "../../lib/services/grades.services";
+import { useQuery } from "@tanstack/react-query";
+//import { testClass } from "../../lib/services/classes.services";
 
 const Grades = () => {
   const today = new Date();
@@ -28,6 +31,12 @@ const Grades = () => {
   const [showWeekends, setShowWeekends] = React.useState(true);
   const { daysInMonth } = useCalendar(new Date(), "en-US");
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const { data, isPending } = useQuery({
+    queryKey: ["gradesBySubject"],
+    queryFn: gradesBySubject,
+    staleTime: 1000 * 60 * 5,
+  });
+
   const names = [
     "John Peterburg",
     "Jane Doe",
@@ -41,6 +50,11 @@ const Grades = () => {
     console.log(name, day);
   };
 
+  const onHandleTest = () => {
+    console.log(data);
+  };
+
+  //TODO: make grades table a separate component
   return (
     <Box sx={{ backgroundColor: "gray", height: "100vh", pt: 1 }}>
       <Box sx={{ ml: 4, mt: 5, mr: 4 }}>
@@ -70,7 +84,11 @@ const Grades = () => {
             type="date"
             value={new Date().toISOString().slice(0, 10)}
           />
-          <Button size="small" variant="contained">
+          <Button
+            size="small"
+            variant="contained"
+            onClick={() => onHandleTest()}
+          >
             Apply
           </Button>
         </Paper>
