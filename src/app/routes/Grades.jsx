@@ -29,29 +29,68 @@ const Grades = () => {
   const today = new Date();
   const [viewMode, setViewMode] = React.useState("monthly");
   const [showWeekends, setShowWeekends] = React.useState(true);
-  const { daysInMonth } = useCalendar(new Date(), "en-US");
+  const { daysInMonth, goPrev } = useCalendar(new Date(), "en-US");
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  const { data, isPending } = useQuery({
+  const { data: studentGrades = [], isPending } = useQuery({
     queryKey: ["gradesBySubject"],
     queryFn: gradesBySubject,
     staleTime: 1000 * 60 * 5,
   });
-
-  const names = [
-    "John Peterburg",
-    "Jane Doe",
-    "Alice Smith",
-    "Bob Johnson",
-    "Charlie Brown",
-    "Diana Price of Longname",
-  ];
 
   const onHandleCell = (name, day) => {
     console.log(name, day);
   };
 
   const onHandleTest = () => {
-    console.log(data);
+    goPrev();
+  };
+
+  const checkForGrade = (student, day) => {
+    for (let grade of student.grades) {
+      const date = new Date(grade.gradingDate);
+      if (date.getDate() === day) {
+        return (
+          <TableCell
+            sx={{
+              borderRight: "1px solid rgba(0, 0, 0, 0.12)",
+              padding: 0,
+              textAlign: "center",
+              width: 40,
+              maxWidth: 40,
+              height: 40,
+              maxHeight: 40,
+              color: grade.grade_Type === "default" ? "black" : "red",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.08)",
+              },
+            }}
+            onClick={() => onHandleCell(student.firstName, day)}
+            key={`${student.firstName}-${day}`}
+          >
+            {console.log(grade.grade_Type)}
+            {grade.score}
+          </TableCell>
+        );
+      }
+    }
+    return (
+      <TableCell
+        sx={{
+          borderRight: "1px solid rgba(0, 0, 0, 0.12)",
+          padding: 0,
+          textAlign: "center",
+          width: 40,
+          maxWidth: 40,
+          height: 40,
+          maxHeight: 40,
+          "&:hover": {
+            backgroundColor: "rgba(0, 0, 0, 0.08)",
+          },
+        }}
+        onClick={() => onHandleCell(student.firstName, day)}
+        key={`${student.firstName}-${day}`}
+      ></TableCell>
+    );
   };
 
   //TODO: make grades table a separate component
@@ -128,8 +167,8 @@ const Grades = () => {
             </TableHead>
 
             <TableBody>
-              {names.map((name) => (
-                <TableRow key={name}>
+              {studentGrades.map((student) => (
+                <TableRow key={student.firstName + student.lastName}>
                   <TableCell
                     sx={{
                       borderRight: "1px solid rgba(0, 0, 0, 0.12)",
@@ -139,27 +178,12 @@ const Grades = () => {
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
                     }}
-                    key={name}
+                    key={student.firstName + student.lastName}
                   >
-                    {name}
+                    {student.firstName} {student.lastName}
                   </TableCell>
 
-                  {days.map((day) => (
-                    <TableCell
-                      sx={{
-                        borderRight: "1px solid rgba(0, 0, 0, 0.12)",
-                        width: 40,
-                        maxWidth: 40,
-                        height: 40,
-                        maxHeight: 40,
-                        "&:hover": {
-                          backgroundColor: "rgba(0, 0, 0, 0.08)",
-                        },
-                      }}
-                      onClick={() => onHandleCell(name, day)}
-                      key={`${name}-${day}`}
-                    />
-                  ))}
+                  {days.map((day) => checkForGrade(student, day))}
                 </TableRow>
               ))}
             </TableBody>
