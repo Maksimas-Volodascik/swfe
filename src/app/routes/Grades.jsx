@@ -19,30 +19,30 @@ import {
   FormControlLabel,
   TextField,
 } from "@mui/material";
-
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import useCalendar from "../../hooks/useCalendar";
 import { gradesBySubject } from "../../lib/services/grades.services";
-import { useQuery } from "@tanstack/react-query";
-//import { testClass } from "../../lib/services/classes.services";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const Grades = () => {
   const today = new Date();
+  const queryClient = useQueryClient();
   const [viewMode, setViewMode] = React.useState("monthly");
   const [showWeekends, setShowWeekends] = React.useState(true);
-  const { daysInMonth, goPrev } = useCalendar(new Date(), "en-US");
+  const { daysInMonth, goPrev, goNext, startOfMonth } = useCalendar(
+    new Date(),
+    "en-US",
+  );
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   const { data: studentGrades = [], isPending } = useQuery({
-    queryKey: ["gradesBySubject"],
-    queryFn: gradesBySubject,
+    queryKey: ["gradesBySubject", startOfMonth],
+    queryFn: () => gradesBySubject(startOfMonth),
     staleTime: 1000 * 60 * 5,
   });
 
   const onHandleCell = (name, day) => {
     console.log(name, day);
-  };
-
-  const onHandleTest = () => {
-    goPrev();
   };
 
   const checkForGrade = (student, day) => {
@@ -67,7 +67,6 @@ const Grades = () => {
             onClick={() => onHandleCell(student.firstName, day)}
             key={`${student.firstName}-${day}`}
           >
-            {console.log(grade.grade_Type)}
             {grade.score}
           </TableCell>
         );
@@ -101,10 +100,32 @@ const Grades = () => {
           sx={{
             width: "100%",
             mb: 1,
-            p: 2,
+            p: 1,
           }}
         >
-          <FormControl size="small" sx={{ minWidth: 180 }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Button onClick={() => goPrev()}>
+              <KeyboardArrowLeftIcon />
+            </Button>
+
+            <Box
+              sx={{
+                textAlign: "center",
+                userSelect: "none",
+                width: "115px",
+                maxWidth: "115px",
+                fontSize: "15px",
+              }}
+            >
+              {startOfMonth.toLocaleString("default", { month: "long" })}{" "}
+              {startOfMonth.getFullYear()}
+            </Box>
+
+            <Button onClick={() => goNext()}>
+              <KeyboardArrowRightIcon />
+            </Button>
+          </Box>
+          {/* <FormControl size="small" sx={{ minWidth: 180 }}>
             <InputLabel id="view-mode-label">View Mode</InputLabel>
             <Select
               value={viewMode}
@@ -129,7 +150,7 @@ const Grades = () => {
             onClick={() => onHandleTest()}
           >
             Apply
-          </Button>
+          </Button> */}
         </Paper>
 
         <TableContainer
@@ -144,6 +165,8 @@ const Grades = () => {
                 <TableCell
                   sx={{
                     borderRight: "1px solid rgba(0, 0, 0, 0.12)",
+                    width: 120,
+                    maxWidth: 120,
                   }}
                 />
                 {days.map((day) => (
