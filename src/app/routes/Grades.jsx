@@ -10,39 +10,55 @@ import {
   Paper,
   Box,
   Button,
-  Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Switch,
-  FormControlLabel,
-  TextField,
+  Popover,
 } from "@mui/material";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import useCalendar from "../../hooks/useCalendar";
-import { gradesBySubject } from "../../lib/services/grades.services";
+import { addGrade, gradesBySubject } from "../../lib/services/grades.services";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import ModalGrade from "../../components/ModalGrade";
 
 const Grades = () => {
-  const today = new Date();
   const queryClient = useQueryClient();
-  const [viewMode, setViewMode] = React.useState("monthly");
-  const [showWeekends, setShowWeekends] = React.useState(true);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedCellId, setSelectedCellId] = useState(0, 0);
+  const [selectedGrade, setSelectedGrade] = useState(null);
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
   const { daysInMonth, goPrev, goNext, startOfMonth } = useCalendar(
     new Date(),
     "en-US",
   );
+
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  const { data: studentGrades = [], isPending } = useQuery({
+
+  const { data: studentGrades = [] } = useQuery({
     queryKey: ["gradesBySubject", startOfMonth],
     queryFn: () => gradesBySubject(startOfMonth),
     staleTime: 1000 * 60 * 5,
   });
 
-  const onHandleCell = (name, day) => {
-    console.log(name, day);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setSelectedCellId(0, 0);
+  };
+
+  const onHandleCell = (enrollmentId, day) => {
+    const gradingDate = new Date(
+      startOfMonth.getFullYear(),
+      startOfMonth.getMonth(),
+      day,
+    );
+    addGrade(6, "default", gradingDate.toISOString(), enrollmentId);
+    queryClient.invalidateQueries({
+      queryKey: ["gradesBySubject", startOfMonth],
+    });
   };
 
   const checkForGrade = (student, day) => {
@@ -64,7 +80,8 @@ const Grades = () => {
                 backgroundColor: "rgba(0, 0, 0, 0.08)",
               },
             }}
-            onClick={() => onHandleCell(student.firstName, day)}
+            //onClick={() => onHandleCell(student.enrollmentId, day)} //TODO: open edit grade modal
+            //onClick={() => (setIsOpen(true), setSelectedGrade(grade))}
             key={`${student.firstName}-${day}`}
           >
             {grade.score}
@@ -82,16 +99,25 @@ const Grades = () => {
           maxWidth: 40,
           height: 40,
           maxHeight: 40,
+          backgroundColor:
+            selectedCellId.enrollmentId === student.enrollmentId &&
+            selectedCellId.day === day
+              ? "rgba(0, 0, 0, 0.12)"
+              : "transparent",
           "&:hover": {
             backgroundColor: "rgba(0, 0, 0, 0.08)",
           },
         }}
-        onClick={() => onHandleCell(student.firstName, day)}
+        aria-describedby={id}
+        //onClick={() => onHandleCell(student.enrollmentId, day)} //TODO: open add grade modal
+        onClick={(event) => {
+          handleClick(event);
+          setSelectedCellId({ enrollmentId: student.enrollmentId, day });
+        }}
         key={`${student.firstName}-${day}`}
       ></TableCell>
     );
   };
-
   //TODO: make grades table a separate component
   return (
     <Box sx={{ backgroundColor: "gray", height: "100vh", pt: 1 }}>
@@ -125,32 +151,6 @@ const Grades = () => {
               <KeyboardArrowRightIcon />
             </Button>
           </Box>
-          {/* <FormControl size="small" sx={{ minWidth: 180 }}>
-            <InputLabel id="view-mode-label">View Mode</InputLabel>
-            <Select
-              value={viewMode}
-              label="Settings 1"
-              onChange={(e) => setViewMode(e.target.value)}
-            >
-              <MenuItem value="daily">Daily</MenuItem>
-              <MenuItem value="weekly">Weekly</MenuItem>
-              <MenuItem value="monthly">Monthly</MenuItem>
-            </Select>
-          </FormControl>
-
-          <TextField
-            label="Settings 2"
-            size="small"
-            type="date"
-            value={new Date().toISOString().slice(0, 10)}
-          />
-          <Button
-            size="small"
-            variant="contained"
-            onClick={() => onHandleTest()}
-          >
-            Apply
-          </Button> */}
         </Paper>
 
         <TableContainer
@@ -213,6 +213,23 @@ const Grades = () => {
           </Table>
         </TableContainer>
       </Box>
+
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+      >
+        <ModalGrade onClose={handleClose} />
+      </Popover>
     </Box>
   );
 };

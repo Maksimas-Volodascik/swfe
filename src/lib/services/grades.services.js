@@ -1,11 +1,32 @@
 import { api } from "../types";
 
 export const gradesBySubject = async (startDate) => {
-  console.log(
-    `/Grades?year=${startDate.getFullYear()}&month=${startDate.getMonth() + 1}`,
-  );
   const { data } = await api.get(
     `/Grades?year=${startDate.getFullYear()}&month=${startDate.getMonth() + 1}`,
   );
   return data;
+};
+
+export const addGrade = async (
+  score,
+  gradingType,
+  gradingDate,
+  enrollmentId,
+) => {
+  const grade = {
+    score: score,
+    grade_Type: gradingType,
+    gradingDate: gradingDate,
+    enrollmentId: enrollmentId,
+  };
+  console.log(grade);
+  try {
+    const { data } = await api.post("/Grades", grade);
+    return data;
+  } catch (error) {
+    if (error.response) {
+      return { message: error.response.data?.message };
+    }
+    return { message: "Network Error" };
+  }
 };
