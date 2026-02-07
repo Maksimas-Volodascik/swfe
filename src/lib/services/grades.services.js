@@ -12,6 +12,7 @@ export const addGrade = async (
   gradingType,
   gradingDate,
   enrollmentId,
+  description,
 ) => {
   const grade = {
     score: score,

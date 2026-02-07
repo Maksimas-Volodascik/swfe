@@ -1,6 +1,12 @@
-import React, { use } from "react";
-import Typography from "@mui/material/Typography";
-import { Box, Button, TextField } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  TextField,
+  Typography,
+  Stack,
+} from "@mui/material";
 
 const style = {
   width: 400,
@@ -9,41 +15,97 @@ const style = {
   p: 4,
 };
 
-export default function ModalGrade({ onClose }) {
+export default function ModalGrade({ onClose, onSubmit }) {
+  const [gradeData, setGradeData] = useState({
+    grade: "",
+    description: "",
+  });
+  const [type, setType] = useState("default");
+
+  const handelOnChange = (e) => {
+    const { name, value } = e.target;
+
+    if (
+      (name === "grade" && value === "") ||
+      (/^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 10)
+    ) {
+      setGradeData({ ...gradeData, [e.target.name]: value });
+    }
+    if (name === "description") {
+      setGradeData({ ...gradeData, [e.target.name]: value });
+    }
+  };
+  const handleSubmit = () => {
+    onSubmit(gradeData.grade, type, gradeData.description);
+  };
+
   return (
-    <Box sx={style}>
+    <Box
+      sx={{
+        width: 260,
+        p: 1.5,
+        border: "1px solid",
+        borderColor: "divider",
+        borderRadius: 1.5,
+      }}
+    >
       <Typography
-        id="modal-modal-title"
-        variant="h6"
-        component="h2"
-        sx={{ textAlign: "center", marginBottom: "15px" }}
+        variant="subtitle1"
+        sx={{
+          fontWeight: 500,
+          mb: 1,
+          borderBottom: "1px, solid, black",
+        }}
       >
-        ModalGrade window
+        Edit Grade
       </Typography>
-      <TextField
-        id="outlined-basic"
-        label="Grade"
-        variant="outlined"
-        size="small"
-      />
-      <TextField
-        id="outlined-basic"
-        label="Type"
-        variant="outlined"
-        size="small"
-      />
-      <Box sx={{ textAlign: "center" }}>
-        <Button color="success" variant="contained">
-          Confirm
-        </Button>
-        <Button
-          sx={{ marginLeft: "10px", backgroundColor: "gray" }}
-          variant="contained"
-          onClick={onClose}
-        >
-          Close
-        </Button>
-      </Box>
+
+      <Stack spacing={1}>
+        <TextField
+          label="Grade (1-10)"
+          type="text"
+          size="small"
+          value={gradeData.grade}
+          name="grade"
+          onChange={handelOnChange}
+        />
+        <ButtonGroup size="small" fullWidth>
+          {["default", "test", "project"].map((value) => (
+            <Button
+              key={value}
+              variant={type === value ? "contained" : "outlined"}
+              onClick={() => setType(value)}
+              sx={{ textTransform: "capitalize" }}
+            >
+              {value}
+            </Button>
+          ))}
+        </ButtonGroup>
+        <TextField
+          label="Description"
+          multiline
+          name="description"
+          onChange={handelOnChange}
+          sx={{
+            "& textarea": {
+              resize: "vertical",
+            },
+          }}
+        />
+        <Stack direction="row" spacing={1} justifyContent="flex-end">
+          <Button size="small" variant="text" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            size="small"
+            variant="contained"
+            onClick={handleSubmit}
+            disabled={gradeData.grade === ""}
+          >
+            Set Grade
+          </Button>
+        </Stack>
+      </Stack>
     </Box>
   );
 }

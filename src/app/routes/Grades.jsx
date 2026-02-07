@@ -23,17 +23,13 @@ const Grades = () => {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedCellId, setSelectedCellId] = useState(0, 0);
-  const [selectedGrade, setSelectedGrade] = useState(null);
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
   const { daysInMonth, goPrev, goNext, startOfMonth } = useCalendar(
     new Date(),
     "en-US",
   );
-
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-
   const { data: studentGrades = [] } = useQuery({
     queryKey: ["gradesBySubject", startOfMonth],
     queryFn: () => gradesBySubject(startOfMonth),
@@ -49,13 +45,19 @@ const Grades = () => {
     setSelectedCellId(0, 0);
   };
 
-  const onHandleCell = (enrollmentId, day) => {
+  const handleOnSubmit = (grade, type, description) => {
     const gradingDate = new Date(
       startOfMonth.getFullYear(),
       startOfMonth.getMonth(),
-      day,
+      selectedCellId.day,
     );
-    addGrade(6, "default", gradingDate.toISOString(), enrollmentId);
+    addGrade(
+      grade,
+      type,
+      gradingDate.toISOString(),
+      selectedCellId.enrollmentId,
+      description,
+    );
     queryClient.invalidateQueries({
       queryKey: ["gradesBySubject", startOfMonth],
     });
@@ -228,7 +230,12 @@ const Grades = () => {
           horizontal: "center",
         }}
       >
-        <ModalGrade onClose={handleClose} />
+        <ModalGrade
+          onClose={handleClose}
+          onSubmit={(grade, type, description) =>
+            handleOnSubmit(grade, type, description)
+          }
+        />
       </Popover>
     </Box>
   );
