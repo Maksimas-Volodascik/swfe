@@ -15,14 +15,19 @@ import {
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import useCalendar from "../../hooks/useCalendar";
-import { addGrade, gradesBySubject } from "../../lib/services/grades.services";
+import {
+  addGrade,
+  editGrade,
+  gradesBySubject,
+} from "../../lib/services/grades.services";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ModalGrade from "../../components/ModalGrade";
 
 const Grades = () => {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedCellId, setSelectedCellId] = useState(0, 0);
+  const [selectedCellId, setSelectedCellId] = useState(0, 0, 0);
+  const [editType, setEditType] = useState(""); //add or edit
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   const { daysInMonth, goPrev, goNext, startOfMonth } = useCalendar(
@@ -31,6 +36,7 @@ const Grades = () => {
   );
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   const { data: studentGrades = [] } = useQuery({
+    //todo: rewrite in useMutation to update grades each time value changes
     queryKey: ["gradesBySubject", startOfMonth],
     queryFn: () => gradesBySubject(startOfMonth),
     staleTime: 1000 * 60 * 5,
@@ -46,20 +52,35 @@ const Grades = () => {
   };
 
   const handleOnSubmit = (grade, type, description) => {
+    setAnchorEl(null);
+    setSelectedCellId(0, 0);
     const gradingDate = new Date(
       startOfMonth.getFullYear(),
       startOfMonth.getMonth(),
       selectedCellId.day,
     );
-    addGrade(
-      grade,
-      type,
-      gradingDate.toISOString(),
-      selectedCellId.enrollmentId,
-      description,
-    );
+
+    if (editType === "add") {
+      addGrade(
+        grade,
+        type,
+        gradingDate.toISOString(),
+        selectedCellId.enrollmentId,
+        description,
+      );
+    } else {
+      editGrade(
+        grade,
+        type,
+        gradingDate.toISOString(),
+        selectedCellId.enrollmentId,
+        description,
+      );
+    }
+
     queryClient.invalidateQueries({
       queryKey: ["gradesBySubject", startOfMonth],
+      refetchType: "active",
     });
   };
 
@@ -82,8 +103,15 @@ const Grades = () => {
                 backgroundColor: "rgba(0, 0, 0, 0.08)",
               },
             }}
-            //onClick={() => onHandleCell(student.enrollmentId, day)} //TODO: open edit grade modal
-            //onClick={() => (setIsOpen(true), setSelectedGrade(grade))}
+            onClick={(event) => {
+              handleClick(event);
+              setSelectedCellId({
+                enrollmentId: student.enrollmentId,
+                day,
+                grade: grade.score,
+              });
+              setEditType("edit");
+            }}
             key={`${student.firstName}-${day}`}
           >
             {grade.score}
@@ -111,10 +139,14 @@ const Grades = () => {
           },
         }}
         aria-describedby={id}
-        //onClick={() => onHandleCell(student.enrollmentId, day)} //TODO: open add grade modal
         onClick={(event) => {
           handleClick(event);
-          setSelectedCellId({ enrollmentId: student.enrollmentId, day });
+          setSelectedCellId({
+            enrollmentId: student.enrollmentId,
+            day,
+            grade: "",
+          });
+          setEditType("add");
         }}
         key={`${student.firstName}-${day}`}
       ></TableCell>
@@ -231,6 +263,7 @@ const Grades = () => {
         }}
       >
         <ModalGrade
+          selectedGrade={selectedCellId}
           onClose={handleClose}
           onSubmit={(grade, type, description) =>
             handleOnSubmit(grade, type, description)

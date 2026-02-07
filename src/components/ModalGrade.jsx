@@ -15,9 +15,9 @@ const style = {
   p: 4,
 };
 
-export default function ModalGrade({ onClose, onSubmit }) {
+export default function ModalGrade({ selectedGrade, onClose, onSubmit }) {
   const [gradeData, setGradeData] = useState({
-    grade: "",
+    grade: selectedGrade.grade,
     description: "",
   });
   const [type, setType] = useState("default");
