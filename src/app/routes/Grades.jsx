@@ -11,6 +11,10 @@ import {
   Box,
   Button,
   Popover,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -22,25 +26,33 @@ import {
 } from "../../lib/services/grades.services";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ModalGrade from "../../components/ModalGrade";
+import { getClassSubjects } from "../../lib/services/classes.services";
 
 const Grades = () => {
+  const { daysInMonth, goPrev, goNext, startOfMonth } = useCalendar(
+    new Date(),
+    "en-US",
+  );
   const queryClient = useQueryClient();
+  const [selectedSubject, setSelectedSubject] = useState("");
+
+  const { data: studentGrades = [] } = useQuery({
+    //todo: rewrite in useMutation to update grades each time value changes
+    queryKey: ["gradesBySubject", startOfMonth, selectedSubject],
+    queryFn: () => gradesBySubject(startOfMonth, selectedSubject),
+    staleTime: 1000 * 60 * 5,
+  });
+  const { data: subjects = [] } = useQuery({
+    queryKey: ["classSubjects"],
+    queryFn: () => getClassSubjects(),
+    staleTime: Infinity, //fetch data once
+  });
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedCellId, setSelectedCellId] = useState(0, 0, 0);
   const [editType, setEditType] = useState(""); //add or edit
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  const { daysInMonth, goPrev, goNext, startOfMonth } = useCalendar(
-    new Date(),
-    "en-US",
-  );
-  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  const { data: studentGrades = [] } = useQuery({
-    //todo: rewrite in useMutation to update grades each time value changes
-    queryKey: ["gradesBySubject", startOfMonth],
-    queryFn: () => gradesBySubject(startOfMonth),
-    staleTime: 1000 * 60 * 5,
-  });
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -152,6 +164,10 @@ const Grades = () => {
       ></TableCell>
     );
   };
+
+  const handleSubjectChange = (event) => {
+    setSelectedSubject(event.target.value);
+  };
   //TODO: make grades table a separate component
   return (
     <Box sx={{ backgroundColor: "gray", height: "100vh", pt: 1 }}>
@@ -184,6 +200,14 @@ const Grades = () => {
             <Button onClick={() => goNext()}>
               <KeyboardArrowRightIcon />
             </Button>
+            <FormControl size="small" sx={{ width: 160 }}>
+              <InputLabel>Subjects</InputLabel>
+              <Select value={selectedSubject} onChange={handleSubjectChange}>
+                {subjects.map((subject) => (
+                  <MenuItem value={subject.id}>{subject.subjectName}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
         </Paper>
 

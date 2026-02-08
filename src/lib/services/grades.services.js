@@ -1,8 +1,8 @@
 import { api } from "../types";
 
-export const gradesBySubject = async (startDate) => {
+export const gradesBySubject = async (startDate, selectedSubject) => {
   const { data } = await api.get(
-    `/Grades?year=${startDate.getFullYear()}&month=${startDate.getMonth() + 1}`,
+    `/Grades?year=${startDate.getFullYear()}&month=${startDate.getMonth() + 1}&classSubjectId=${selectedSubject}`,
   );
   return data;
 };
