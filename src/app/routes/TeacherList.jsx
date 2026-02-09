@@ -16,7 +16,7 @@ const TeacherList = () => {
   const [openUserModal, setOpenUserModal] = useState(false);
   const [openAlertModal, setOpenAlertModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [mode, setMode] = useState("add"); // "add" or "edit"
+  const [isEditMode, setIsEditMode] = useState(true); // "add" or "edit"
   const { data: teachers = [], isPending } = useQuery({
     queryKey: ["teachers"],
     queryFn: getTeacherList,
@@ -48,7 +48,7 @@ const TeacherList = () => {
   const handleOnEdit = (data) => {
     setSelectedUser(data);
     setOpenUserModal(true);
-    setMode("edit");
+    setIsEditMode(true);
   };
 
   return (
@@ -79,19 +79,19 @@ const TeacherList = () => {
               <Button
                 variant="outlined"
                 color="success"
-                onClick={() => (setMode("add"), setOpenUserModal(true))}
+                onClick={() => (setIsEditMode(false), setOpenUserModal(true))}
               >
                 + Add new
               </Button>
               <ModalUser
-                userType="teachers"
-                mode={mode}
+                userType="teacher"
+                isEditMode={isEditMode}
                 userData={selectedUser}
                 open={openUserModal}
                 onClose={() => (setOpenUserModal(false), setSelectedUser(null))}
               />
               <ModalAlert
-                userType="teachers"
+                userType="teacher"
                 userData={selectedUser}
                 open={openAlertModal}
                 onClose={() => (

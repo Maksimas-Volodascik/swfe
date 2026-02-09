@@ -1,26 +1,26 @@
 import React, { use } from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  Box,
+  Modal,
+} from "@mui/material";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { addTeacher, editTeacher } from "../lib/services/teachers.services";
 import { addStudent, editStudent } from "../lib/services/students.services";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  borderRadius: "5px",
-  boxShadow: 24,
-  p: 4,
-};
-
-export default function ModalUser({ userType, mode, userData, open, onClose }) {
+export default function ModalUser({
+  userType,
+  isEditMode,
+  userData,
+  open,
+  onClose,
+}) {
   if (!open) return null;
   const queryClient = useQueryClient();
   const today = new Date().toISOString().split("T")[0];
@@ -30,7 +30,7 @@ export default function ModalUser({ userType, mode, userData, open, onClose }) {
     password: "",
     firstName: userData ? userData.name : "",
     lastName: userData ? userData.lastname : "",
-    dateOfBirth: userData ? userData.birthdate : today,
+    dateOfBirth: userData.birthdate ? userData.birthdate : today,
   });
 
   const handleChange = (e) => {
@@ -40,11 +40,11 @@ export default function ModalUser({ userType, mode, userData, open, onClose }) {
 
   const handleOnSubmit = async () => {
     const response =
-      mode === "add"
-        ? userType === "teachers"
+      isEditMode === false
+        ? userType === "teacher"
           ? await addTeacher(formData)
           : await addStudent(formData)
-        : userType === "teachers"
+        : userType === "teacher"
           ? await editTeacher(userData.id, formData)
           : await editStudent(userData.id, formData);
 
@@ -52,7 +52,7 @@ export default function ModalUser({ userType, mode, userData, open, onClose }) {
     if (response.message) {
       setErrMsg(response.message);
     } else {
-      queryClient.invalidateQueries({ queryKey: [userType] });
+      queryClient.invalidateQueries({ queryKey: [userType + "s"] }); //+s to make it plural for useQuery table
       onClose();
     }
   };
@@ -64,79 +64,72 @@ export default function ModalUser({ userType, mode, userData, open, onClose }) {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          {userData ? "Edit User" : "Add New User"}
-        </Typography>
-        <form>
-          {userData ? (
-            ""
-          ) : (
-            <input
-              type="text"
-              name="email"
-              placeholder="Email"
-              autoComplete="new-password"
-              onChange={handleChange}
-            ></input>
+      <Dialog open={open} onClose={onClose}>
+        <DialogTitle sx={{ textTransform: "capitalize" }}>
+          {isEditMode ? "Edit " + userType : "Add " + userType}
+        </DialogTitle>
+
+        <DialogContent dividers>
+          {!isEditMode && (
+            <Box display="flex" gap={2} mb={2}>
+              <TextField
+                label="Email"
+                autoComplete="off"
+                fullWidth
+                name="email"
+                onChange={handleChange}
+                sx={{ flex: 1 }}
+              />
+              <TextField
+                label="Password"
+                type="password"
+                autoComplete="new-password"
+                fullWidth
+                name="password"
+                onChange={handleChange}
+                sx={{ flex: 1 }}
+              />
+            </Box>
           )}
-          <br />
-          {userData ? null : (
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              autoComplete="new-password"
+
+          <Box display="flex" gap={2} mb={2}>
+            <TextField
+              label="First Name"
+              value={formData?.firstName || ""}
+              fullWidth
+              name="firstName"
               onChange={handleChange}
-            ></input>
-          )}
-          <br />
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            value={formData.firstName}
-            onChange={handleChange}
-          ></input>
-          <br />
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Last Name"
-            value={formData.lastName}
-            onChange={handleChange}
-          ></input>
-          <br />
-          <input
+              sx={{ flex: 1 }}
+            />
+            <TextField
+              label="Last Name"
+              value={formData?.lastName || ""}
+              fullWidth
+              name="lastName"
+              onChange={handleChange}
+              sx={{ flex: 1 }}
+            />
+          </Box>
+
+          <TextField
+            label="Birth Date"
             type="date"
+            value={formData?.dateOfBirth || ""}
+            fullWidth
             name="dateOfBirth"
-            placeholder="Date of Birth"
-            min="2018-01-01"
-            max={today}
-            value={formData.dateOfBirth}
             onChange={handleChange}
-          ></input>
-          <br />
-          <Button
-            color="success"
-            variant="contained"
-            onClick={() => handleOnSubmit()}
-          >
-            Confirm
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={onClose} color="inherit">
+            Cancel
           </Button>
-          <Button
-            sx={{ marginLeft: "10px", backgroundColor: "gray" }}
-            variant="contained"
-            onClick={onClose}
-          >
-            Close
+          <Button variant="contained" onClick={() => handleOnSubmit()}>
+            {isEditMode ? "Save Changes" : "Add " + userType}
           </Button>
-          <br />
-          {errMsg && (
-            <div style={{ color: "red", marginTop: "8px" }}>{errMsg}</div>
-          )}
-        </form>
-      </Box>
+        </DialogActions>
+      </Dialog>
     </Modal>
   );
 }
