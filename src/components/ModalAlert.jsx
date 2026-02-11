@@ -1,5 +1,5 @@
 import { Box, Button, Modal, Typography } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTeacher } from "../lib/services/teachers.services";
 import { deleteStudent } from "../lib/services/students.services";
 
@@ -17,6 +17,24 @@ const style = {
 
 export default function ModalAlert({ userType, userData, open, onClose }) {
   const queryClient = useQueryClient();
+  const queryKeyMap = {
+    teacher: "teachers",
+    student: "students",
+  };
+  const deleteMap = {
+    teacher: deleteTeacher,
+    student: deleteStudent,
+  };
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      return deleteMap[userType](userData.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [queryKeyMap[userType]] });
+      onClose();
+    },
+  });
 
   const handleOnDelete = async (userData) => {
     const response =
@@ -52,7 +70,7 @@ export default function ModalAlert({ userType, userData, open, onClose }) {
           <Button
             color="success"
             variant="contained"
-            onClick={() => handleOnDelete(userData)}
+            onClick={() => mutation.mutate()}
           >
             Confirm
           </Button>

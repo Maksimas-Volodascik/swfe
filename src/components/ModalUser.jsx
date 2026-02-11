@@ -10,7 +10,7 @@ import {
   Modal,
 } from "@mui/material";
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addTeacher, editTeacher } from "../lib/services/teachers.services";
 import { addStudent, editStudent } from "../lib/services/students.services";
 
@@ -30,32 +30,37 @@ export default function ModalUser({
     password: "",
     firstName: userData ? userData.name : "",
     lastName: userData ? userData.lastname : "",
-    dateOfBirth: userData.birthdate ? userData.birthdate : today,
+    dateOfBirth: userData && userData.birthdate ? userData.birthdate : today,
   });
-
+  console.log(userType);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
-
-  const handleOnSubmit = async () => {
-    const response =
-      isEditMode === false
-        ? userType === "teacher"
-          ? await addTeacher(formData)
-          : await addStudent(formData)
-        : userType === "teacher"
-          ? await editTeacher(userData.id, formData)
-          : await editStudent(userData.id, formData);
-
-    setErrMsg(response.message);
-    if (response.message) {
-      setErrMsg(response.message);
-    } else {
-      queryClient.invalidateQueries({ queryKey: [userType + "s"] }); //+s to make it plural for useQuery table
-      onClose();
-    }
+  const createMap = {
+    teacher: addTeacher,
+    student: addStudent,
   };
+  const editMap = {
+    teacher: editTeacher,
+    student: editStudent,
+  };
+  const queryKeyMap = {
+    teacher: "teachers",
+    student: "students",
+  };
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (!isEditMode) {
+        return createMap[userType](formData);
+      }
+      return editMap[userType](userData.id, formData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [queryKeyMap[userType]] });
+      onClose();
+    },
+  });
 
   return (
     <Modal
@@ -125,7 +130,7 @@ export default function ModalUser({
           <Button onClick={onClose} color="inherit">
             Cancel
           </Button>
-          <Button variant="contained" onClick={() => handleOnSubmit()}>
+          <Button variant="contained" onClick={() => mutation.mutate()}>
             {isEditMode ? "Save Changes" : "Add " + userType}
           </Button>
         </DialogActions>

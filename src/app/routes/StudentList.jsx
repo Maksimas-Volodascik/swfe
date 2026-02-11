@@ -89,14 +89,14 @@ const StudentList = () => {
                 + Add new
               </Button>
               <ModalUser
-                userType="students"
+                userType="student"
                 isEditMode={isEditMode}
                 userData={selectedUser}
                 open={openUserModal}
                 onClose={() => (setOpenUserModal(false), setSelectedUser(null))}
               />
               <ModalAlert
-                userType="students"
+                userType="student"
                 userData={selectedUser}
                 open={openAlertModal}
                 onClose={() => (
