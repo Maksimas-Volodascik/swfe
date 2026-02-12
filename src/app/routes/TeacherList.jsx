@@ -8,8 +8,8 @@ import UserTable from "../../components/UserTable";
 import ModalAlert from "../../components/ModalAlert";
 import { getTeacherList } from "../../lib/services/teachers.services";
 
-function createData(id, name, lastname, classid, btn) {
-  return { id, name, lastname, classid, btn };
+function createData(id, name, lastname, subjectName, btn) {
+  return { id, name, lastname, subjectName, btn };
 }
 
 const TeacherList = () => {
@@ -27,16 +27,17 @@ const TeacherList = () => {
     { width: 5, label: "ID", dataKey: "id" },
     { width: 100, label: "First Name", dataKey: "name" },
     { width: 100, label: "Last Name", dataKey: "lastname" },
-    { width: 100, label: "Class ID", dataKey: "classid" },
+    { width: 100, label: "Subject", dataKey: "subjectName" },
     { width: 100, label: "", dataKey: "btn" },
   ];
+  console.log(teachers);
   const rows =
     teachers?.map((teacher) =>
       createData(
         teacher.id,
         teacher.firstName,
         teacher.lastName,
-        teacher.classId,
+        teacher.subjectName,
       ),
     ) || [];
 
