@@ -8,8 +8,8 @@ import UserTable from "../../components/UserTable";
 import ModalAlert from "../../components/ModalAlert";
 import { getTeacherList } from "../../lib/services/teachers.services";
 
-function createData(id, name, lastname, subjectName, btn) {
-  return { id, name, lastname, subjectName, btn };
+function createData(id, name, lastname, subjectName, classSubjectId, btn) {
+  return { id, name, lastname, subjectName, classSubjectId, btn };
 }
 
 const TeacherList = () => {
@@ -38,9 +38,9 @@ const TeacherList = () => {
         teacher.firstName,
         teacher.lastName,
         teacher.subjectName,
+        teacher.classSubjectId,
       ),
     ) || [];
-
   const handleOnDelete = (data) => {
     setSelectedUser(data);
     setOpenAlertModal(true);
