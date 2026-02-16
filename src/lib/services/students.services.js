@@ -1,15 +1,15 @@
 import React from "react";
 import axios from "axios";
-import { api } from "../types";
+import { API_URL } from "../types";
 
 export const getStudentList = async () => {
-  const { data } = await api.get(`/student`);
+  const { data } = await API_URL.get(`/student`);
   return data;
 };
 
 export const editStudent = async (studentId, studentData) => {
   try {
-    const { data } = await api.patch(`/student/${studentId}`, studentData);
+    const { data } = await API_URL.patch(`/student/${studentId}`, studentData);
     return data;
   } catch (error) {
     if (error.response) {
@@ -22,7 +22,7 @@ export const editStudent = async (studentId, studentData) => {
 
 export const addStudent = async (studentData) => {
   try {
-    const { data } = await api.post(`/student`, studentData);
+    const { data } = await API_URL.post(`/student`, studentData);
     return data;
   } catch (error) {
     if (error.response) {
@@ -34,7 +34,7 @@ export const addStudent = async (studentData) => {
 
 export const deleteStudent = async (studentId) => {
   try {
-    const { data } = await api.delete(`/student/${studentId}`);
+    const { data } = await API_URL.delete(`/student/${studentId}`);
     return data;
   } catch (error) {
     if (error.response) {

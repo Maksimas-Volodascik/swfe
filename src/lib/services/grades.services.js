@@ -1,7 +1,7 @@
-import { api } from "../types";
+import { API_URL } from "../types";
 
 export const gradesBySubject = async (startDate, selectedSubject) => {
-  const { data } = await api.get(
+  const { data } = await API_URL.get(
     `/Grades?year=${startDate.getFullYear()}&month=${startDate.getMonth() + 1}&classSubjectId=${selectedSubject}`,
   );
   return data;
@@ -22,7 +22,7 @@ export const addGrade = async (
   };
 
   try {
-    const { data } = await api.post("/Grades", grade);
+    const { data } = await API_URL.post("/Grades", grade);
     return data;
   } catch (error) {
     if (error.response) {
@@ -47,7 +47,7 @@ export const editGrade = async (
   };
   console.log(grade);
   try {
-    const { data } = await api.patch("/Grades", grade);
+    const { data } = await API_URL.patch("/Grades", grade);
     return data;
   } catch (error) {
     if (error.response) {

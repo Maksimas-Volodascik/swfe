@@ -1,9 +1,9 @@
 import React from "react";
-import { api } from "../types";
+import { API_URL } from "../types";
 
 export const signIn = async ({ email, password }) => {
   try {
-    const response = await api.post("/user/login", {
+    const response = await API_URL.post("/user/login", {
       email,
       password,
     });

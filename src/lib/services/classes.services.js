@@ -1,16 +1,16 @@
 import axios from "axios";
-import { api } from "../types";
+import { API_URL } from "../types";
 import { getAccessToken } from "../tokenService";
 
 export const getClassSubjects = async () => {
-  const { data } = await api.get(`/class-subjects`);
+  const { data } = await API_URL.get(`/class-subjects`);
   return data;
 };
 
 export const enrollStudent = async (classId) => {
   const token = getAccessToken();
 
-  const response = await api.post("/Enrollments/" + classId, null, {
+  const response = await API_URL.post(`/Enrollments/${classId}`, null, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

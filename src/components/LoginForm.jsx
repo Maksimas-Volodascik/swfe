@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import { SignInPage } from "@toolpad/core/SignInPage";
 import { saveAccessToken } from "../lib/tokenService";
-import { API_URL, api } from "../lib/types";
+import { API_URL } from "../lib/types";
 
 const providers = [{ id: "credentials", name: "Email and Password" }];
 
@@ -12,7 +12,7 @@ const LoginForm = () => {
   const signIn = async (provider, formData) => {
     //refactor login form and function
     try {
-      const response = await api.post("/user/login", {
+      const response = await API_URL.post("/user/login", {
         email: formData.get("email"),
         password: formData.get("password"),
       });
