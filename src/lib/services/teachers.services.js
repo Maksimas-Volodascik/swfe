@@ -8,6 +8,7 @@ export const getTeacherList = async () => {
 };
 
 export const editTeacher = async (teacherId, teacherData) => {
+  console.log(teacherData);
   try {
     const { data } = await API_URL.patch(`/teacher/${teacherId}`, teacherData);
     return data;

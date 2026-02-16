@@ -30,7 +30,7 @@ const TeacherList = () => {
     { width: 100, label: "Subject", dataKey: "subjectName" },
     { width: 100, label: "", dataKey: "btn" },
   ];
-  console.log(teachers);
+
   const rows =
     teachers?.map((teacher) =>
       createData(

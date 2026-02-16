@@ -37,10 +37,10 @@ export default function ModalUser({
     firstName: userData ? userData.name : "",
     lastName: userData ? userData.lastname : "",
     dateOfBirth: userData && userData.birthdate ? userData.birthdate : today,
-    classSubject:
-      userData && userData.classSubjectId ? userData.classSubjectId : "",
+    classSubjectId:
+      userData && userData.classSubjectId ? userData.classSubjectId : null,
   });
-  console.log(userData);
+
   const { data: classSubjects = [] } = useQuery({
     queryKey: ["classSubjects"],
     queryFn: getClassSubjects,
@@ -52,31 +52,31 @@ export default function ModalUser({
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const actionMap = {
-    teacher: {
-      create: () => addTeacher(teacherDataPayload(formData)),
-      edit: () => editTeacher(teacherDataPayload(formData)),
-    },
-    student: {
-      create: () => addStudent(studentDataPayload(formData)),
-      edit: () => editStudent(studentDataPayload(formData)),
-    },
-  };
-
   const queryKeyMap = {
     teacher: "teachers",
     student: "students",
   };
 
-  const studentDataPayload = (formData) => ({
+  const actionMap = {
+    teacher: {
+      create: () => addTeacher(teacherDataPayload(formData)),
+      edit: () => editTeacher(userData.id, teacherDataPayload(formData)),
+    },
+    student: {
+      create: () => addStudent(studentDataPayload(formData)),
+      edit: () => editStudent(userData.id, studentDataPayload(formData)),
+    },
+  };
+
+  const teacherDataPayload = (formData) => ({
     email: formData.email,
     password: formData.password,
     firstName: formData.firstName,
     lastName: formData.lastName,
-    classSubject: formData.classSubject,
+    classSubjectId: formData.classSubjectId,
   });
 
-  const teacherDataPayload = (formData) => ({
+  const studentDataPayload = (formData) => ({
     email: formData.email,
     password: formData.password,
     firstName: formData.firstName,
@@ -86,7 +86,7 @@ export default function ModalUser({
 
   const mutation = useMutation({
     mutationFn: async () => {
-      return actionMap[userType][isEditMode ? "edit" : "create"];
+      return actionMap[userType][isEditMode ? "edit" : "create"]();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [queryKeyMap[userType]] });
@@ -147,13 +147,14 @@ export default function ModalUser({
               sx={{ flex: 1 }}
             />
           </Box>
+
           {userType === "teacher" ? (
             <FormControl fullWidth>
               <InputLabel>Class</InputLabel>
               <Select
-                value={formData.classSubject}
+                value={formData.classSubjectId}
                 label="Technology"
-                name="classSubject"
+                name="classSubjectId"
                 onChange={handleChange}
               >
                 {classSubjects.map((option) => (
